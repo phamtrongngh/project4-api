@@ -7,7 +7,10 @@ var userSchema = new Schema({
     fullname: String,
     email: String,
     address: String,
-    avatar: String,
+    avatar:{
+        type:Schema.Types.ObjectId,
+        ref:"Image"
+    },
     gender: Boolean,
     friends: [
         {
@@ -20,7 +23,7 @@ var userSchema = new Schema({
                 0,    //'add friend',
                 1,    //'requested',
                 2,    //'pending',
-                3,    //'friends'
+                3    //'friends'
             ]
         }
     ],
@@ -34,7 +37,10 @@ var userSchema = new Schema({
     ],
     comments: [
         {
-            idNewFeed: String,
+            idNewFeed: {
+                type:Schema.Types.ObjectId,
+                ref:"Newfeed"
+            },
             content: String,
             created_date: Date
         }

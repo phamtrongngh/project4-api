@@ -1,7 +1,7 @@
 const Newfeed = require('../models/newfeed.model');
 const { request } = require('express');
 
-module.exports.getNewfeeds = async (res, req) => {
+module.exports.getNewfeeds = async (req, res) => {
     var newfeed = await Newfeed.find();
     res.json(newfeed);
 }
@@ -28,13 +28,21 @@ module.exports.getNewfeed = async (req, res) => {
 }
 
 module.exports.updateNewfeed = async (req, res) => {
-    let newfeed = await Newfeed.findById(res.params.id).exec();
-    newfeed.set(req.body);
-    let result = await newfeed.find();
-    res.json(result);
+    Newfeed.findById(req.body._id, (err, newfeed) =>{
+        if (err) res.json(err)
+        if (!newfeed) {
+            res.json('Cant Find');
+        }
+        else { 
+            newfeed.save((error, result) => {
+                if (error) res.json(error)
+                res.json({nf: result})
+            });
+        }
+    });
 }
 
 module.exports.deleteNewfeed = async (req, res) => {
-    let result = await Newfeed.deleteOne({_id:res.params.id}).exec();
+    let result = await Newfeed.deleteOne({_id:req.params.id}).exec();
     res.json(result);
 }

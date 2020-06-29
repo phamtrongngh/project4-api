@@ -7,7 +7,7 @@ module.exports.getUser = async (req, res) => {
 }
 
 module.exports.register = async (req, res, next) => {
-    
+
     User.findOne({ phone: req.body.phone }, (err, user) => {
         if (user == null) {
             bcrypt.hash(req.body.password, 10, function (err, hash) {
@@ -17,9 +17,8 @@ module.exports.register = async (req, res, next) => {
                 user.save((err, result) => {
                     if (err) return res.json({ err });
                     res.json({ user: result });
-                    io.on("connection", function (socket) {
-                        io.sockets.emit("messageServer", socket.id +"has connected...");
-                    })
+                    var io = req.app.locals.io;
+                    io.sockets.emit("messageRegister", "There some register");
                 })
             })
         } else {
@@ -33,6 +32,13 @@ module.exports.login = async (req, res) => {
         if (user != null) {
             if (bcrypt.compareSync(req.body.password, user.password)) {
                 res.json(user);
+                var io = req.app.locals.io;
+                if (!listUser.find(x=>x.phone==user.phone)){
+                    listUser.push(user);
+                }
+                io.on("connection", (socket) => {
+                    io.sockets.emit("messageServer", listUser);
+                })
             }
             else {
                 res.json({ message: "Wrong password" })

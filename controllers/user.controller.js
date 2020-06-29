@@ -4,6 +4,7 @@ module.exports.getUser = async (req, res) => {
     var users = await User.find();
     res.json(users);
 }
+
 module.exports.register = async (req, res, next) => {
     User.findOne({ phone: req.body.phone }, (err, user) => {
         if (user == null) {
@@ -29,16 +30,11 @@ module.exports.login = async (req, res) => {
         if (err) res.json(err);
         if (user != null) {
             if (bcrypt.compareSync(req.body.password, user.password)) {
-                const io = req.app.locals.io;
-                io.on("connection", function (socket) {
-                    io.sockets.emit("messageServer", socket.id +"has connected...");
-                })
                 res.json(user);
             }
             else {
                 res.json({ message: "Wrong password" })
             }
-
         }
         else {
             res.json({ message: "Wrong username" });

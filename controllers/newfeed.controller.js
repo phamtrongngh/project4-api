@@ -14,21 +14,23 @@ module.exports.createNewfeed = async (req, res) => {
             res.json({ newfeed: result });
         })
     }
-    catch(error) {
+    catch (error) {
         req.status(500).send(error)
     }
 }
 
 module.exports.getNewfeed = async (req, res) => {
-    try {
-        let newfeed = await Newfeed.findById(request.params.id)
-    } catch (error) {
-        
-    }
+    let newfeed = await Newfeed.findById(req.body._id, (err, newfeed) => {
+        if (err) res.json(res);
+        if (!newfeed) { return res.json('Cant Find')}
+        else {
+            res.json(newfeed);
+        }
+    });
 }
 
 module.exports.updateNewfeed = async (req, res) => {
-    Newfeed.findById(req.body._id, (err, newfeed) =>{
+    Newfeed.findById(req.body._id, (err, newfeed) => {
         if (err) res.json(err)
         if (!newfeed) {
             return res.json('Cant Find');
@@ -37,13 +39,13 @@ module.exports.updateNewfeed = async (req, res) => {
             newfeed.set(req.body);
             newfeed.save((error, result) => {
                 if (error) res.json(error)
-                res.json({nf: result})
+                res.json({ nf: result })
             });
         }
     });
 }
 
 module.exports.deleteNewfeed = async (req, res) => {
-    let result = await Newfeed.deleteOne({_id:req.params.id}).exec();
+    let result = await Newfeed.deleteOne({ _id: req.params.id }).exec();
     res.json(result);
 }

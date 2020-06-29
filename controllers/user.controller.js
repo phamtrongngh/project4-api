@@ -7,6 +7,7 @@ module.exports.getUser = async (req, res) => {
 }
 
 module.exports.register = async (req, res, next) => {
+    
     User.findOne({ phone: req.body.phone }, (err, user) => {
         if (user == null) {
             bcrypt.hash(req.body.password, 10, function (err, hash) {
@@ -16,6 +17,9 @@ module.exports.register = async (req, res, next) => {
                 user.save((err, result) => {
                     if (err) return res.json({ err });
                     res.json({ user: result });
+                    io.on("connection", function (socket) {
+                        io.sockets.emit("messageServer", socket.id +"has connected...");
+                    })
                 })
             })
         } else {

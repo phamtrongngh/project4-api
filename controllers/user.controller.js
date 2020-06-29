@@ -1,6 +1,5 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
-
 module.exports.getUser = async (req, res) => {
     var users = await User.find();
     res.json(users);
@@ -16,6 +15,9 @@ module.exports.register = async (req, res, next) => {
                 user.save((err, result) => {
                     if (err) return res.json({ err });
                     res.json({ user: result });
+                    io.on("connection", function (socket) {
+                        io.sockets.emit("messageServer", socket.id +"has connected...");
+                    })
                 })
             })
         } else {

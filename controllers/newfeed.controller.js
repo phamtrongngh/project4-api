@@ -1,5 +1,4 @@
 const Newfeed = require('../models/newfeed.model');
-const { request } = require('express');
 
 module.exports.getNewfeeds = async (req, res) => {
     var newfeed = await Newfeed.find();

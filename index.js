@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 app.use("/user", userRoute);
 app.use("/newfeed", newfeedRoute);
-app.use("/restaurent", restaurentRoute);
+app.use("/restaurant", restaurentRoute);
 
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);

@@ -1,6 +1,4 @@
 const Restaurent = require('../models/restaurant.model');
-const { request } = require('express');
-
 
 module.exports.getRestaurents = async (req, res) => {
     var restaurent = await Restaurent.find();

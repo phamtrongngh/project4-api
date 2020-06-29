@@ -1,5 +1,4 @@
 const Newfeed = require('../models/newfeed.model');
-const { request } = require('express');
 
 module.exports.getNewfeeds = async (req, res) => {
     var newfeed = await Newfeed.find();
@@ -15,12 +14,12 @@ module.exports.createNewfeed = async (req, res) => {
         })
     }
     catch (error) {
-        req.status(500).send(error)
+        res.status(500).send(error)
     }
 }
 
 module.exports.getNewfeed = async (req, res) => {
-    let newfeed = await Newfeed.findById(req.body._id, (err, newfeed) => {
+    let newfeed = await Newfeed.findById({_id: req.params.id}, (err, newfeed) => {
         if (err) res.json(res);
         if (!newfeed) { return res.json('Cant Find')}
         else {
@@ -46,6 +45,6 @@ module.exports.updateNewfeed = async (req, res) => {
 }
 
 module.exports.deleteNewfeed = async (req, res) => {
-    let result = await Newfeed.deleteOne({ _id: req.params.id }).exec();
+    let result = await Newfeed.deleteOne({_id: req.params.id}).exec();
     res.json(result);
 }

@@ -33,7 +33,8 @@ module.exports.updateNewfeed = async (req, res) => {
         if (!newfeed) {
             res.json('Cant Find');
         }
-        else { 
+        else {
+            newfeed.set(req.body);
             newfeed.save((error, result) => {
                 if (error) res.json(error)
                 res.json({nf: result})

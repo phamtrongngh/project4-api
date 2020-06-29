@@ -1,0 +1,99 @@
+[33mcommit 8b86cd5134bb96059d15f154a5372dfa59ca491d[m[33m ([m[1;36mHEAD -> [m[1;32mCRUD-newfeed[m[33m, [m[1;31morigin/CRUD-newfeed[m[33m)[m
+Merge: 21fcade fba9c48
+Author: letuyettrinh10c12 <letuyettrinh10c12@gmail.com>
+Date:   Mon Jun 29 17:29:57 2020 +0700
+
+    return res.json
+
+[33mcommit 21fcaded7844bdfac2a3873f9e62be25f7e0d1c8[m
+Author: letuyettrinh10c12 <letuyettrinh10c12@gmail.com>
+Date:   Mon Jun 29 17:27:43 2020 +0700
+
+    Complete CRUD on Newfeed
+
+[33mcommit fba9c484e1ee4c21e382ea8b17b7a216fce189cf[m
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Mon Jun 29 17:18:14 2020 +0700
+
+    crud-update-nenwfeed
+
+[33mcommit 619da73066d5118a5ce3be2e5016f139902c0c59[m
+Merge: e095c7f 6c34cc0
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Mon Jun 29 16:54:36 2020 +0700
+
+    Merge branch 'CRUD-newfeed' of https://github.com/phamtrongngh/project4-api into CRUD-newfeed
+
+[33mcommit 6c34cc056c30f8740094a1167d76f0b40603646e[m
+Author: letuyettrinh10c12 <letuyettrinh10c12@gmail.com>
+Date:   Mon Jun 29 16:51:30 2020 +0700
+
+    change controller newfeed
+
+[33mcommit 031915dd8dd3b7985675c39f80f8d7c6f2f270f4[m
+Merge: 1e636bb 5193916
+Author: letuyettrinh10c12 <letuyettrinh10c12@gmail.com>
+Date:   Mon Jun 29 16:03:38 2020 +0700
+
+    sdfa
+
+[33mcommit e095c7f4ecbc5ebe28c37ebd4e914efff9616698[m
+Merge: 5193916 1e636bb
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Mon Jun 29 15:54:55 2020 +0700
+
+    dsafa
+
+[33mcommit 519391672ee5ba90a12616c2c7e7b7909f1ad25b[m[33m ([m[1;31morigin/master[m[33m, [m[1;32mmaster[m[33m)[m
+Author: letuyettrinh10c12 <letuyettrinh10c12@gmail.com>
+Date:   Mon Jun 29 15:37:43 2020 +0700
+
+    CRUD For New Feed Controller
+
+[33mcommit 1e636bbc1b4af2c6a2f1afc448064ba0f21897d0[m
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Mon Jun 29 15:36:08 2020 +0700
+
+    update db
+
+[33mcommit 7082820945a39962338fbb5c3d066ff035466116[m
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Mon Jun 29 14:57:04 2020 +0700
+
+    user route
+
+[33mcommit 744e97d47f29fcb1bdb19a3c331934dba57ac23b[m
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Sat Jun 27 22:06:46 2020 +0700
+
+    register user
+
+[33mcommit 2771f583149b2ca68625ffe33db54c8fc7c7e220[m
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Mon Jun 22 06:30:05 2020 +0700
+
+    add model:food,product,newfeed
+
+[33mcommit 6ba62b5305e79cfebcec8a3dcc183faf997706d6[m
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Mon Jun 22 04:40:06 2020 +0700
+
+    add user model
+
+[33mcommit c210d7e1fa0be1de41e7622c54b5195f49096a90[m
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Sun Jun 21 15:18:23 2020 +0700
+
+    Create dump
+
+[33mcommit b0d7ba445e5c160933a24ac6d341d2672f68e265[m
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Sun Jun 21 06:00:24 2020 +0700
+
+    set database
+
+[33mcommit 0b17907ebc42be3f219a8cc2256aeb579df9dee2[m
+Author: Ben Alpha <benalpha1105@gmail.com>
+Date:   Sat Jun 6 15:30:22 2020 +0700
+
+    init project

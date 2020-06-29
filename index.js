@@ -7,10 +7,13 @@ let userRoute = require("./routes/user.route.js");
 
 let newfeedRoute = require("./routes/newfeed.route.js");
 
+let restaurentRoute = require("./routes/restaurent.route.js");
+
 app.use(bodyParser.json());
 
 app.use("/user", userRoute);
 app.use("/newfeed", newfeedRoute);
+app.use("/restaurant", restaurentRoute);
 
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);

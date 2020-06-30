@@ -20,7 +20,10 @@ var productSchema = new Schema({
                 type:Schema.Types.ObjectId,
                 ref:"User"
             },
-            stars:[1,2,3,4,5],
+            stars:{
+                type:Number,
+                enum:[1,2,3,4,5]
+            },
             comment:String
         }
     ]

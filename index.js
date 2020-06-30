@@ -9,11 +9,14 @@ let newfeedRoute = require("./routes/newfeed.route.js");
 
 let restaurentRoute = require("./routes/restaurent.route.js");
 
+let productRoute = require("./routes/product.route");
+
 app.use(bodyParser.json());
 
 app.use("/user", userRoute);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurentRoute);
+app.use("/product", productRoute)
 
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);

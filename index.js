@@ -10,7 +10,10 @@ let restaurantRoute = require("./routes/restaurent.route.js");
 
 let productRoute = require("./routes/product.route");
 
+
+let foodCategory = require("./routes/foodCategory.route")
 let authController = require("./controllers/auth.controller");
+
 
 app.use(bodyParser.json());
 
@@ -32,6 +35,7 @@ app.use(authController.isAuthenticated);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurantRoute);
 app.use("/product", productRoute)
+app.use("/foodcategory", foodCategory)
 
 server.listen(9032, () => {
     console.log("Server is running...");

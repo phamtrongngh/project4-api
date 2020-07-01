@@ -26,6 +26,12 @@ module.exports.register = async (req, res, next) => {
         }
     })
 }
+module.exports.logout = async (req, res) => {
+    var io = req.app.locals.io;
+    listUser.splice(listUser.indexOf(listUser.find((x)=>x.phone==req.body.phone)), 1);
+    io.sockets.emit("messageServer", listUser);
+    res.json("You have signed out!!!");
+}
 module.exports.login = async (req, res) => {
     User.findOne({ phone: req.body.phone }, (err, user) => {
         if (err) res.json(err);
@@ -33,7 +39,7 @@ module.exports.login = async (req, res) => {
             if (bcrypt.compareSync(req.body.password, user.password)) {
                 res.json(user);
                 var io = req.app.locals.io;
-                if (!listUser.find(x=>x.phone==user.phone)){
+                if (!listUser.find(x => x.phone == user.phone)) {
                     listUser.push(user);
                 }
                 io.on("connection", (socket) => {

@@ -11,12 +11,15 @@ let restaurantRoute = require("./routes/restaurent.route.js");
 
 let productRoute = require("./routes/product.route");
 
+let foodCategory = require("./routes/foodCategory.route")
+
 app.use(bodyParser.json());
 
 app.use("/user", userRoute);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurantRoute);
 app.use("/product", productRoute)
+app.use("/foodcategory", foodCategory)
 
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);

@@ -6,7 +6,7 @@ mongoose.connect("mongodb://localhost:27017/foodtap", { useNewUrlParser: true, u
 let userRoute = require("./routes/user.route.js");
 let newfeedRoute = require("./routes/newfeed.route.js");
 let restaurentRoute = require("./routes/restaurent.route.js");
-
+let authController = require("./controllers/auth.controller");
 app.use(bodyParser.json());
 
 
@@ -23,7 +23,7 @@ io.on("connection",function(socket){
     })
 })
 app.use("/user", userRoute);
-
+app.use(authController.isAuthenticated);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurentRoute);
 

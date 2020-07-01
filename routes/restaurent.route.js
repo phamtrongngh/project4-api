@@ -1,11 +1,11 @@
 let express = require("express");
 let router = express.Router();
-let restaurentController = require("../controllers/restaurent.controller");
+let restaurantController = require("../controllers/restaurant.controller");
 
-router.get("/",restaurentController.getRestaurents);
-router.get("/:id", restaurentController.getRestaurent);
-router.post("/",restaurentController.createRestaurent);
-router.put("/",restaurentController.updateRestaurent);
-router.delete("/:id", restaurentController.deleteRestaurent);
+router.get("/",restaurantController.getRestaurants);
+router.get("/:id", restaurantController.getRestaurant);
+router.post("/",restaurantController.createRestaurant);
+router.put("/",restaurantController.updateRestaurant);
+router.delete("/:id", restaurantController.deleteRestaurant);
 
 module.exports = router;

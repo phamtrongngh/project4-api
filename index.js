@@ -23,6 +23,7 @@ io.on("connection",function(socket){
     })
 })
 app.use("/user", userRoute);
+
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurentRoute);
 

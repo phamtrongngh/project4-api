@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
-
+const jwt = require("jsonwebtoken");
 module.exports.getUser = async (req, res) => {
     var users = await User.find();
     res.json(users);
@@ -37,14 +37,15 @@ module.exports.login = async (req, res) => {
         if (err) res.json(err);
         if (user != null) {
             if (bcrypt.compareSync(req.body.password, user.password)) {
-                res.json(user);
                 var io = req.app.locals.io;
                 if (!listUser.find(x => x.phone == user.phone)) {
                     listUser.push(user);
                 }
+                var token = jwt.sign({_id:user._id,fullname:user.fullname},"project4foodtap",{algorithm:"HS256",expiresIn:"3h"});
                 io.on("connection", (socket) => {
                     io.sockets.emit("messageServer", listUser);
                 })
+                res.json({access_token:token});
             }
             else {
                 res.json({ message: "Wrong password" })

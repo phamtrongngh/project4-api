@@ -7,7 +7,6 @@ module.exports.getUser = async (req, res) => {
 }
 
 module.exports.register = async (req, res, next) => {
-
     User.findOne({ phone: req.body.phone }, (err, user) => {
         if (user == null) {
             bcrypt.hash(req.body.password, 10, function (err, hash) {

@@ -3,22 +3,22 @@ var Schema = mongoose.Schema;
 var productSchema = new Schema({
     name: String,
     price: Number,
-    category:[
+    category: [
         {
-            type:Schema.Types.ObjectId,
-            ref:"FoodCategory"
+            type: Schema.Types.ObjectId,
+            ref: "FoodCategory"
         }
     ],
-    saleoff:Number,
-    idRes:{
-        type:Schema.Types.ObjectId,
-        ref:"Restaurant"
+    saleoff: Number,
+    idRes: {
+        type: Schema.Types.ObjectId,
+        ref: "Restaurant"
     },
-    rating:[
+    rating: [
         {
-            idUser:{
-                type:Schema.Types.ObjectId,
-                ref:"User"
+            idUser: {
+                type: Schema.Types.ObjectId,
+                ref: "User"
             },
             stars:{
                 type:Number,

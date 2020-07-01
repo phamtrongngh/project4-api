@@ -1,25 +1,24 @@
-const Restaurent = require('../models/restaurant.model');
 
-module.exports.getRestaurents = async (req, res) => {
-    var restaurent = await Restaurent.find();
-    res.json(restaurent);
+const Restaurant = require('../models/restaurant.model');
+
+module.exports.getRestaurants = async (req, res) => {
+    var restaurant = await Restaurant.find();
+    res.json(restaurant);
 }
 
-module.exports.createRestaurent = async (req, res) => {
+module.exports.createRestaurant = async (req, res) => {
     try {
-        const restaurent = new Restaurent(req.body)
-        await restaurent.save((err, result) => {
+        const restaurant = new Restaurant(req.body)
+        await restaurant.save((err, result) => {
             if (err) return res.json({ err });
-            res.json({ restaurent: result });
-        })
-    }
-    catch (error) {
-        res.status(500).send(error)
-    }
-}
+            res.json({ restaurant: result });
 
-module.exports.getRestaurent = async (req, res) => {
-    let restaurent = await Restaurent.findById({_id: req.params.id}, (err, restaurant) => {
+
+
+
+module.exports.getRestaurant = async (req, res) => {
+    let restaurant = await Restaurant.findById({_id: req.params.id}, (err, restaurant) => {
+
         if (err) return res.json(err);
         if (!restaurant) { return res.json('Cant Find')}
         else {
@@ -28,8 +27,11 @@ module.exports.getRestaurent = async (req, res) => {
     });
 }
 
-module.exports.updateRestaurent= async (req, res) => {
-    Restaurent.findById(req.body._id, (err, restaurant) => {
+
+module.exports.updateRestaurant= async (req, res) => {
+    Restaurant.findById(req.body._id, (err, restaurant) => {
+
+
         if (err) return res.json(err)
         if (!restaurant) {
             return res.json('Cant Find');
@@ -44,7 +46,9 @@ module.exports.updateRestaurent= async (req, res) => {
     });
 }
 
-module.exports.deleteRestaurent = async (req, res) => {
-    let result = await Restaurent.deleteOne({ _id: req.params.id }).exec();
+
+module.exports.deleteRestaurant = async (req, res) => {
+    let result = await Restaurant.deleteOne({ _id: req.params.id }).exec();
+
     res.json(result);
 }

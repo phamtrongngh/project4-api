@@ -7,9 +7,9 @@ var userSchema = new Schema({
     fullname: String,
     email: String,
     address: String,
-    avatar:{
-        type:Schema.Types.ObjectId,
-        ref:"Image"
+    avatar: {
+        type: Schema.Types.ObjectId,
+        ref: "Image"
     },
     gender: Boolean,
     friends: [
@@ -38,16 +38,34 @@ var userSchema = new Schema({
     comments: [
         {
             idNewFeed: {
-                type:Schema.Types.ObjectId,
-                ref:"Newfeed"
+                type: Schema.Types.ObjectId,
+                ref: "Newfeed"
             },
             content: String,
             created_date: Date
         }
     ],
-    newfeeds:[{type:Schema.Types.ObjectId, ref:"NewFeed"}],
-    followers:[{type:Schema.Types.ObjectId,ref:"User"}],
-    following:[{type:Schema.Types.ObjectId,ref:"User"}],
-    active:Boolean
+    conversations: [
+        {
+            sender: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User"
+            },
+            messages: [
+                {
+                    content: String,
+                    contentType: {
+                        type: String,
+                        enum: ["text", "image"]
+                    },
+                    created_date: Date
+                }
+            ]
+        }
+    ],
+    newfeeds: [{ type: Schema.Types.ObjectId, ref: "NewFeed" }],
+    followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    following: [{ type: Schema.Types.ObjectId, ref: "User" }],
+    active: Boolean
 }, { timestamps: true })
 module.exports = mongoose.model("User", userSchema, "User");

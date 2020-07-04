@@ -36,7 +36,7 @@ module.exports.login = async (req, res) => {
                 io.on("connection", (socket) => {
                     io.sockets.emit("messageServer", listUser);
                 })
-                res.json(token);
+                res.json({access_token:token});
             }
             else {
                 res.json({ message: "Wrong password" })

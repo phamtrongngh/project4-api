@@ -6,7 +6,12 @@ var userSchema = new Schema({
     dob: Date,
     fullname: String,
     email: String,
-    address: String,
+    address:{
+        city:String, //Thanh pho
+        town:String, //Quan
+        ward:String, //Phuong
+        street:String //dia chi cu the tu viet
+    },
     avatar: {
         type: Schema.Types.ObjectId,
         ref: "Image"

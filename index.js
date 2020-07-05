@@ -29,7 +29,7 @@ io.on("connection",function(socket){
     })
 })
 app.use("/user", userRoute);
-app.use(authController.isAuthenticated);
+// app.use(authController.isAuthenticated);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurantRoute);
 app.use("/product", productRoute)

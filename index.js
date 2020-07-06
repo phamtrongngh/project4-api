@@ -11,7 +11,8 @@ let restaurantRoute = require("./routes/restaurent.route.js");
 let productRoute = require("./routes/product.route");
 let foodCategoryRoute = require("./routes/foodCategory.route")
 let authController = require("./controllers/auth.controller");
-
+let foodRoute = require("./routes/shipper.route");
+let orderRoute = require("./routes/order.route")
 app.use(cookieParser());
 app.use(bodyParser.json());
 
@@ -29,11 +30,13 @@ io.on("connection",function(socket){
     })
 })
 app.use("/user", userRoute);
-// app.use(authController.isAuthenticated);
+//app.use(authController.isAuthenticated);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurantRoute);
 app.use("/product", productRoute)
 app.use("/foodcategory", foodCategoryRoute)
+app.use("/shipper", foodRoute)
+app.use("/order", orderRoute)
 
 server.listen(9032, () => {
     console.log("Server is running...");

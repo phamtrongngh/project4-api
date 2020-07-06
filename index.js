@@ -5,14 +5,16 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 mongoose.connect("mongodb://localhost:27017/foodtap", { useNewUrlParser: true, useUnifiedTopology: true });
 
-let userRoute = require("./routes/user.route.js");
-let newfeedRoute = require("./routes/newfeed.route.js");
-let restaurantRoute = require("./routes/restaurent.route.js");
-let productRoute = require("./routes/product.route");
-let foodCategoryRoute = require("./routes/foodCategory.route")
-let authController = require("./controllers/auth.controller");
-let shipperRoute = require("./routes/shipper.route");
-let orderRoute = require("./routes/order.route")
+const userRoute = require("./routes/user.route.js");
+const newfeedRoute = require("./routes/newfeed.route.js");
+const restaurantRoute = require("./routes/restaurent.route.js");
+const productRoute = require("./routes/product.route");
+const foodCategoryRoute = require("./routes/foodCategory.route")
+const authController = require("./controllers/auth.controller");
+const shipperRoute = require("./routes/shipper.route");
+const orderRoute = require("./routes/order.route")
+const authRoute = require("./routes/auth.route");
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 
@@ -29,7 +31,8 @@ io.on("connection",function(socket){
         }
     })
 })
-app.use("/user", userRoute);
+
+app.use("/auth", authRoute);
 app.use(authController.isAuthenticated);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurantRoute);

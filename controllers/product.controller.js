@@ -1,7 +1,8 @@
 const Product = require('../models/product.model');
 
 module.exports.getProducts = async (req, res) => {
-    var product = await Product.find();
+    var ref = ["category","idRes"]
+    var product = await Product.find().populate(ref);
     res.json(product);
 }
 

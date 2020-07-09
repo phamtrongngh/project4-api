@@ -1,8 +1,7 @@
 const Shipper = require('../models/shipper.model');
 
 module.exports.getShippers = async (req, res) => {
-    var ref = ['rating', 'ordersId'];
-    var shipper = await Shipper.find().populate(ref);
+    var shipper = await Shipper.find();
     res.json(shipper);
 }
 

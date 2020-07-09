@@ -1,8 +1,7 @@
 const Product = require('../models/product.model');
 
 module.exports.getProducts = async (req, res) => {
-    var ref = ["category","idRes"]
-    var product = await Product.find().populate(ref);
+    var product = await Product.find();
     res.json(product);
 }
 
@@ -10,8 +9,8 @@ module.exports.createProduct = async (req, res) => {
     try {
         const product = new Product(req.body)
         await product.save((err, result) => {
-            if (err) return res.json({ err: err });
-            res.json({ product: result});
+            if (err) return res.json({ err });
+            res.json({ product: result });
         })
     }
     catch (error) {

@@ -1,7 +1,8 @@
 const Newfeed = require('../models/newfeed.model');
 
 module.exports.getNewfeeds = async (req, res) => {
-    var newfeed = await Newfeed.find();
+    var ref = ['idUser', 'idRes', 'likes', 'comments'];
+    var newfeed = await Newfeed.find().populate(ref);
     res.json(newfeed);
 }
 

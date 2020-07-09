@@ -1,7 +1,8 @@
 const Order = require('../models/order.model');
 
 module.exports.getOrders = async (req, res) => {
-    var order = await Order.find();
+    var ref = ['idUser', 'listIdProduct', 'shipperId'];
+    var order = await Order.find().populate(ref);
     res.json(order);
 }
 

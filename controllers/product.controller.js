@@ -9,8 +9,8 @@ module.exports.createProduct = async (req, res) => {
     try {
         const product = new Product(req.body)
         await product.save((err, result) => {
-            if (err) return res.json({ err });
-            res.json({ product: result });
+            if (err) return res.json({ err: err });
+            res.json({ product: result});
         })
     }
     catch (error) {

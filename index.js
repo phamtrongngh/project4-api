@@ -11,7 +11,10 @@ const restaurantRoute = require("./routes/restaurent.route.js");
 const productRoute = require("./routes/product.route");
 const foodCategoryRoute = require("./routes/foodCategory.route")
 const authController = require("./controllers/auth.controller");
+const shipperRoute = require("./routes/shipper.route");
+const orderRoute = require("./routes/order.route")
 const authRoute = require("./routes/auth.route");
+
 app.use(cookieParser());
 app.use(bodyParser.json());
 
@@ -28,12 +31,15 @@ io.on("connection",function(socket){
         }
     })
 })
+
 app.use("/auth", authRoute);
 // app.use(authController.isAuthenticated);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurantRoute);
 app.use("/product", productRoute)
 app.use("/foodcategory", foodCategoryRoute)
+app.use("/shipper", shipperRoute)
+app.use("/order", orderRoute)
 
 server.listen(9032, () => {
     console.log("Server is running...");

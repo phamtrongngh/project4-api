@@ -20,7 +20,7 @@ var restaurantSchema = new Schema({
     menus: [
         {
             type: Schema.Types.ObjectId,
-            ref: "Food"
+            ref: "Product"
         }
     ],
     address: String,

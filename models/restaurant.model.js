@@ -4,7 +4,7 @@ var restaurantSchema = new Schema({
     name: String,
     managers: [
         {
-            userId: {
+            user: {
                 type: Schema.Types.ObjectId,
                 ref: "User"
             },

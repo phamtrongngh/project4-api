@@ -32,7 +32,7 @@ io.on("connection",function(socket){
     })
 })
 
-app.use("/auth", authRoute);
+app.use("/authorization", authRoute);
 // app.use(authController.isAuthenticated);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurantRoute);

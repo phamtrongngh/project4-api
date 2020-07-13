@@ -14,7 +14,7 @@ const authController = require("./controllers/auth.controller");
 const shipperRoute = require("./routes/shipper.route");
 const orderRoute = require("./routes/order.route")
 const authRoute = require("./routes/auth.route");
-
+const messageRoute = require("./routes/message.route");
 app.use(cookieParser());
 app.use(bodyParser.json());
 
@@ -33,14 +33,15 @@ io.on("connection",function(socket){
 })
 
 app.use("/authorization", authRoute);
-// app.use(authController.isAuthenticated);
+app.use(authController.isAuthenticated);
+app.use("/message",messageRoute);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurantRoute);
 app.use("/product", productRoute)
 app.use("/foodcategory", foodCategoryRoute)
 app.use("/shipper", shipperRoute)
 app.use("/order", orderRoute)
-
+app.use("/user",userRoute)
 server.listen(9032, () => {
     console.log("Server is running...");
 })

@@ -18,7 +18,6 @@ const messageRoute = require("./routes/message.route");
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 io.on("connection",function(socket){
@@ -32,7 +31,9 @@ io.on("connection",function(socket){
     })
 })
 
+
 app.use("/authorization", authRoute);
+app.use("/public",express.static("public"));
 app.use(authController.isAuthenticated);
 app.use("/message",messageRoute);
 app.use("/newfeed", newfeedRoute);

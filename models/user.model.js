@@ -12,10 +12,7 @@ var userSchema = new Schema({
         ward: String, //Phuong
         street: String //dia chi cu the tu viet
     },
-    avatar: {
-        type: Schema.Types.ObjectId,
-        ref: "Image"
-    },
+    avatar: String,
     gender: Boolean,
     friends: [
         {

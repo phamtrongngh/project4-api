@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 let order = new Schema({
-    idUser:{
+    user:{
         type:Schema.Types.ObjectId,
         ref:"User"
     },
-    listIdProduct:[
+    products:[
         {
             type:Schema.Types.ObjectId,
             ref:"Product"
@@ -18,10 +18,13 @@ let order = new Schema({
         street:String // Dia chi cu the tu viet
     },
     total: Number,
-    shipperId:{
+    shipper:{
         type:Schema.Types.ObjectId,
         ref:"Shipper"
     },
-    status:Boolean
+    status:{
+        type:String,
+        enum:["receiving, delivering, delivered, canceled"]
+    }
 },{timestamps:true});
 module.exports = mongoose.model("Order",order,"Order");

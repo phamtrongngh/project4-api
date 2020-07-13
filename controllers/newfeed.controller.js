@@ -36,9 +36,9 @@ module.exports.updateNewfeed = async (req, res) => {
         }
         else {
             newfeed.set(req.body);
-            newfeed.save((error, result) => {
+            newfeed.updateOne((error, result) => {
                 if (error) res.json(error)
-                res.json({ nf: result })
+                res.json(result)
             });
         }
     });

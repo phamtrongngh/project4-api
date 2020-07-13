@@ -10,21 +10,22 @@ var productSchema = new Schema({
         }
     ],
     saleoff: Number,
-    idRes: {
+    restaurant: {
         type: Schema.Types.ObjectId,
         ref: "Restaurant"
     },
     rating: [
         {
-            idUser: {
+            user: {
                 type: Schema.Types.ObjectId,
                 ref: "User"
             },
-            stars:{
-                type:Number,
-                enum:[1,2,3,4,5]
+            stars: {
+                type: Number,
+                min:1,
+                max:5
             },
-            comment:String
+            comment: String
         }
     ]
 }, { timestamps: true })

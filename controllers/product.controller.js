@@ -1,7 +1,7 @@
 const Product = require('../models/product.model');
 
 module.exports.getProducts = async (req, res) => {
-    var product = await Product.find();
+    var product = await Product.find().lean().populate(["restaurant","category"]);
     res.json(product);
 }
 
@@ -36,9 +36,9 @@ module.exports.updateProduct = async (req, res) => {
         }
         else {
             product.set(req.body);
-            product.save((error, result) => {
+            product.updateOne((error, result) => {
                 if (error) res.json(error)
-                res.json({ pd: result })
+                res.json({result})
             });
         }
     });

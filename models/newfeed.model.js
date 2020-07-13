@@ -1,16 +1,14 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var newfeedSchema = new Schema({
-    idUser: {
+    user: {
         type: Schema.Types.ObjectId,
         ref: "User"
     },
-    idRes: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "Restaurant"
-        }
-    ],
+    restaurant: {
+        type: Schema.Types.ObjectId,
+        ref: "Restaurant"
+    },
     content: String,
     images: [
         {
@@ -26,11 +24,8 @@ var newfeedSchema = new Schema({
     ],
     comments: [
         {
-            userId: {
-                type: Schema.Types.ObjectId,
-                ref: "User"
-            },
-            content: String
+            type:Schema.Types.ObjectId,
+            ref:"Comment"
         }
     ],
     typed: Boolean //true = Normal Newfeed | false = Food Newfeed

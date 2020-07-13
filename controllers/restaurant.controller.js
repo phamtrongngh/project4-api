@@ -34,9 +34,9 @@ module.exports.updateRestaurant= async (req, res) => {
         }
         else {
             restaurant.set(req.body);
-            restaurant.save((error, result) => {
+            restaurant.updateOne((error, result) => {
                 if (error) res.json(error)
-                res.json({ rst: result })
+                res.json(result)
             });
         }
     });

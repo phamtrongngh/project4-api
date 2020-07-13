@@ -36,9 +36,9 @@ module.exports.updateFoodCategory = async (req, res) => {
         }
         else {
             foodCategory.set(req.body);
-            foodCategory.save((error, result) => {
+            foodCategory.updateOne((error, result) => {
                 if (error) res.json(error)
-                res.json({ fc: result })
+                res.json(result)
             });
         }
     });

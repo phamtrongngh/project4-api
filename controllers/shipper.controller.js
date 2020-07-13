@@ -36,9 +36,9 @@ module.exports.updateShipper = async (req, res) => {
         }
         else {
             shipper.set(req.body);
-            shipper.save((error, result) => {
+            shipper.updateOne((error, result) => {
                 if (error) res.json(error)
-                res.json({ sp: result })
+                res.json(result)
             });
         }
     });

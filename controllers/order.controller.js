@@ -36,9 +36,9 @@ module.exports.updateOrder = async (req, res) => {
         }
         else {
             order.set(req.body);
-            order.save((error, result) => {
+            order.updateOne((error, result) => {
                 if (error) res.json(error)
-                res.json({ od: result })
+                res.json({result})
             });
         }
     });

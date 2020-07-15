@@ -24,7 +24,8 @@ var userSchema = new Schema({
                 type: String,
                 enum: [
                     "accepted",
-                    "requested"
+                    "requested",
+                    "pending"
                 ]
             }
         }

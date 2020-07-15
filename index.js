@@ -31,7 +31,6 @@ io.on("connection",function(socket){
     })
 })
 
-
 app.use("/authorization", authRoute);
 app.use("/public",express.static("public"));
 app.use(authController.isAuthenticated);

@@ -9,7 +9,7 @@ module.exports.createNewfeed = async (req, res) => {
     try {
         const newfeed = new Newfeed(req.body)
         await newfeed.save((err, result) => {
-            if (err) return res.json({ err });
+            if (err) return res.json(err);
             res.json({ newfeed: result });
         })
     }

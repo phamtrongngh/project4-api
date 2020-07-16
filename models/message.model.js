@@ -1,17 +1,17 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var messageSchema = new Schema({
-    sender:{
-        type:Schema.Types.ObjectId,
-        ref:"User"
+    sender: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
     },
-    receiver:{
-        type:Schema.Types.ObjectId,
-        ref:"User"
+    receiver: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
     },
-    messageType:{
-        type:String,
-        enum:["text","image"]
+    messageType: {
+        type: String,
+        enum: ["text", "image"]
     },
     content: String
 }, { timestamps: true })

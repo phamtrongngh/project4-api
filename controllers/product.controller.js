@@ -36,9 +36,9 @@ module.exports.updateProduct = async (req, res) => {
         }
         else {
             product.set(req.body);
-            product.save((error, result) => {
+            product.updateOne((error, result) => {
                 if (error) res.json(error)
-                res.json({ pd: result })
+                res.json({result})
             });
         }
     });

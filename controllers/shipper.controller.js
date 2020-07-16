@@ -48,3 +48,11 @@ module.exports.deleteShipper = async (req, res) => {
     let result = await Shipper.deleteOne({_id: req.params.id}).exec();
     res.json(result);
 }
+
+module.exports.acceptOrder = async (req,res) => {
+    
+}
+
+module.exports.cancelOrder = async (req,res) => {
+    
+}

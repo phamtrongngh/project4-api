@@ -2,8 +2,11 @@ const mongoose = require("mongoose");
 const Scheme = mongoose.Schema;
 let shipper = new Scheme(
     {
-        name: String,
+        fullname: String,
+        phone: String,
+        password: String,
         dob: Date,
+        idCard: String,
         gender: Boolean,
         avatar: String,
         rating: [
@@ -14,13 +17,13 @@ let shipper = new Scheme(
                 },
                 stars: {
                     type: Number,
-                    min:1,
-                    max:5
+                    min: 1,
+                    max: 5
                 },
                 comment: String
             }
         ],
-        order: [
+        orders: [
             {
                 type: Scheme.Types.ObjectId,
                 ref: "Order"

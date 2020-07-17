@@ -42,6 +42,12 @@ var userSchema = new Schema({
             ref: "Comment"
         }
     ],
+    orders:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Order"
+        }
+    ],
     conversations: [
         {
             user: {

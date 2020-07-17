@@ -1,8 +1,7 @@
 let express = require("express");
 let router = express.Router();
 let userController = require("../controllers/user.controller.js");
-const { route } = require("./newfeed.route.js");
-router.get("/",userController.getUser);
+router.get("/",userController.getUsers);
 router.put("/",userController.updateUser);
 router.post("/requestFriend/:id",userController.requestFriend);
 router.post("/cancelRequest/:id",userController.cancelRequest);

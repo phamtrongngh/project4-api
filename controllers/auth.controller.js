@@ -10,6 +10,7 @@ module.exports.register = async (req, res, next) => {
                 if (err) return next(err);
                 const user = new User(req.body);
                 user.password = hash;
+                user.avatar = "user-avatar-default.png";
                 user.save((err, result) => {
                     if (err) return res.json({ err });
                     res.json({ user: result });

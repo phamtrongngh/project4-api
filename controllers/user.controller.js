@@ -6,6 +6,9 @@ module.exports.getUsers = async (req, res) => {
     var users = await User.find();
     res.json(users);
 }
+module.exports.getUser = async (req,res) =>{
+    return res.json(User.findOne({_id:req.params.id}));
+}
 module.exports.updateUser = async (req, res) => {
     User.findById(req.body._id, (err, user) => {
         if (err) res.json(err)

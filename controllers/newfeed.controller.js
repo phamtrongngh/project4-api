@@ -6,11 +6,20 @@ module.exports.getNewfeeds = async (req, res) => {
 }
 
 module.exports.createNewfeed = async (req, res) => {
-    const newfeed = new Newfeed(req.body)
-    await newfeed.save((err, result) => {
-        if (err) return res.json(err);
-        res.json({ newfeed: result });
-    })
+    try {
+        const newfeed = new Newfeed(req.body)
+        newfeed.images.push(req.file.path);
+        await newfeed.save((err, result) => {
+            if (err){ return res.json(err);}
+            else{
+                res.json({ newfeed: result });
+            }
+            
+        })
+    }
+    catch (error) {
+        res.status(500).send(error)
+    }
 }
 
 module.exports.getNewfeed = async (req, res) => {

@@ -6,6 +6,7 @@ module.exports.getRestaurants = async (req, res) => {
 }
 
 module.exports.createRestaurant = async (req, res) => {
+
     await Restaurant.findOne({ name: req.body.name }, (err, restaurant) => {
         if (restaurant == null) {
             restaurant = new Restaurant(req.body);
@@ -13,6 +14,7 @@ module.exports.createRestaurant = async (req, res) => {
                 user: req.user._id,
                 role: "admin"
             });
+            restaurant.avatar.push(req.file.path);
             restaurant.save((err, result) => {
                 if (err) return res.json({ err });
                 User.findOne({ _id: result.managers[0].user.toString() }, async (err, user) => {
@@ -24,10 +26,8 @@ module.exports.createRestaurant = async (req, res) => {
         } else {
             return res.json("Tên cửa hàng đã được sử dụng, vui lòng chọn tên khác!");
         }
-
     })
 }
-
 module.exports.getRestaurant = async (req, res) => {
     await Restaurant.findById({ _id: req.params.id }, (err, restaurant) => {
         if (err) return res.json(err);

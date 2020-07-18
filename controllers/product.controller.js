@@ -8,6 +8,7 @@ module.exports.getProducts = async (req, res) => {
 module.exports.createProduct = async (req, res) => {
     try {
         const product = new Product(req.body)
+        product.images.push(req.file.path);
         await product.save((err, result) => {
             if (err) return res.json({ err });
             res.json({ product: result });

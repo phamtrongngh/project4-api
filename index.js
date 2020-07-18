@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 mongoose.connect("mongodb://localhost:27017/foodtap", { useNewUrlParser: true, useUnifiedTopology: true });
 
 const userRoute = require("./routes/user.route.js");
-const newfeedRoute = require("./routes/newfeed.route.js");
+const newfeedRoute = require("./routes/newfeed.route");
 const restaurantRoute = require("./routes/restaurent.route.js");
 const productRoute = require("./routes/product.route");
 const foodCategoryRoute = require("./routes/foodCategory.route")

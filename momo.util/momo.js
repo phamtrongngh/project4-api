@@ -1,4 +1,4 @@
-module.exports = (order) => {
+module.exports = async (order) => {
     const uuidv1 = require('uuidv1');
     const https = require('https');
     //parameters send to MoMo get get payUrl
@@ -11,15 +11,16 @@ module.exports = (order) => {
     var orderInfo = "Thanh toán bằng ví Momo";
     var returnUrl = "http://localhost:8080";
     var notifyurl = "http://localhost:8080";
-    var amount = order.total;
-    var orderId = order._id;
+    var amount = order.amount.toString();
+    // var orderId = order._id;
+    var orderId = uuidv1();
     var requestId = uuidv1();
     var requestType = "captureMoMoWallet";
     var extraData = "merchantName=;merchantId="; //pass empty value if your merchant does not have stores else merchantName=[storeName]; merchantId=[storeId] to identify a transaction map with a physical store
     //before sign HMAC SHA256 with format
     //partnerCode=$partnerCode&accessKey=$accessKey&requestId=$requestId&amount=$amount&orderId=$oderId&orderInfo=$orderInfo&returnUrl=$returnUrl&notifyUrl=$notifyUrl&extraData=$extraData
     var rawSignature = "partnerCode=" + partnerCode + "&accessKey=" + accessKey + "&requestId=" + requestId + "&amount=" + amount + "&orderId=" + orderId + "&orderInfo=" + orderInfo + "&returnUrl=" + returnUrl + "&notifyUrl=" + notifyurl + "&extraData=" + extraData
-
+    var payUrl;
     //signature
     const crypto = require('crypto');
     var signature = crypto.createHmac('sha256', serectkey)
@@ -46,6 +47,7 @@ module.exports = (order) => {
         port: 443,
         path: '/gw_payment/transactionProcessor',
         method: 'POST',
+        // body:body,
         headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(body)
@@ -53,26 +55,37 @@ module.exports = (order) => {
     };
 
     //Send the request and get the response
-    var req = https.request(options, (res) => {
-        console.log(`Status: ${res.statusCode}`);
-        console.log(`Headers: ${JSON.stringify(res.headers)}`);
-        res.setEncoding('utf8');
-        res.on('data', (body) => {
-            console.log('Body');
-            console.log(body);
-            console.log('payURL');
-            console.log(JSON.parse(body).payUrl);
-        });
-        res.on('end', () => {
-            console.log('No more data in response.');
-        });
-    });
+    // var req = await https.request(options,  (res) => {
+    //     res.setEncoding('utf8');
+    //     res.on('data', async (body) => {
+    //         payUrl = await JSON.parse(body).payUrl;
+    //         console.log(body)
+    //     });
+    //     res.on('end', () => {
+    //         console.log('No more data in response.');
+    //     });
+    // });
+    // await req.on('error', (e) => {
+    //     console.log(`problem with request: ${e.message}`) ;
+    // });
+    // // write data to request body
+    // req.write(body);
+    // req.end();
 
-    req.on('error', (e) => {
-        console.log(`problem with request: ${e.message}`);
-    });
-
-    // write data to request body
-    req.write(body);
-    req.end();
+     function doRequest() {
+        return new Promise((resolve, reject) => {
+            https.request(options, (res) => {
+                res.setEncoding('utf8');
+                res.on('data', async (body) => {
+                    // payUrl = await JSON.parse(body).payUrl;
+                    resolve(body);
+                });
+            }).write(body);
+        })
+    }
+    let result ;
+    await doRequest().then((resolve,reject)=>{
+        result = JSON.parse(resolve).payUrl;
+    })
+    return result;
 }

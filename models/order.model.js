@@ -20,7 +20,7 @@ let order = new Schema({
         ward: String, // Phuong
         street: String // Dia chi cu the tu viet
     },
-    total: Number,
+    amount: Number, //Tổng số tiền
     shipper: {
         type: Schema.Types.ObjectId,
         ref: "Shipper"

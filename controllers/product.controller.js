@@ -1,7 +1,7 @@
 const Product = require('../models/product.model');
 
 module.exports.getProducts = async (req, res) => {
-    var product = await Product.find().lean().populate(["restaurant","category"]);
+    var product = await Product.find().lean().populate(["restaurant", "category"]);
     res.json(product);
 }
 
@@ -20,9 +20,9 @@ module.exports.createProduct = async (req, res) => {
 }
 
 module.exports.getProduct = async (req, res) => {
-    let product = await Product.findById({_id: req.params.id}, (err, product) => {
+    await Product.findById({ _id: req.params.id }, (err, product) => {
         if (err) res.json(res);
-        if (!product) { return res.json('Cant Find')}
+        if (!product) { return res.json('Cant Find') }
         else {
             res.json(product);
         }
@@ -39,13 +39,13 @@ module.exports.updateProduct = async (req, res) => {
             product.set(req.body);
             product.updateOne((error, result) => {
                 if (error) res.json(error)
-                res.json({result})
+                res.json({ result })
             });
         }
     });
 }
 
 module.exports.deleteProduct = async (req, res) => {
-    let result = await Product.deleteOne({_id: req.params.id}).exec();
+    let result = await Product.deleteOne({ _id: req.params.id }).exec();
     res.json(result);
 }

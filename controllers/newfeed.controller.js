@@ -23,9 +23,9 @@ module.exports.createNewfeed = async (req, res) => {
 }
 
 module.exports.getNewfeed = async (req, res) => {
-    let newfeed = await Newfeed.findById({_id: req.params.id}, (err, newfeed) => {
+    let newfeed = await Newfeed.findById({ _id: req.params.id }, (err, newfeed) => {
         if (err) res.json(res);
-        if (!newfeed) { return res.json('Cant Find')}
+        if (!newfeed) { return res.json('Cant Find') }
         else {
             res.json(newfeed);
         }
@@ -49,6 +49,6 @@ module.exports.updateNewfeed = async (req, res) => {
 }
 
 module.exports.deleteNewfeed = async (req, res) => {
-    let result = await Newfeed.deleteOne({_id: req.params.id}).exec();
+    let result = await Newfeed.deleteOne({ _id: req.params.id }).exec();
     res.json(result);
 }

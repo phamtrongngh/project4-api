@@ -7,4 +7,5 @@ router.put("/",userController.updateUser);
 router.post("/requestFriend/:id",userController.requestFriend);
 router.post("/cancelRequest/:id",userController.cancelRequest);
 router.post("/acceptRequest/:id",userController.acceptRequest);
+router.post("/comment/:id",userController.comment);
 module.exports = router;

@@ -22,16 +22,14 @@ module.exports.createOrder = async (req, res) => {
         if (err) return res.json({ err });
         req.user.orders.push(result._id);
         await req.user.updateOne(req.user);
-        Momo(result).then(value=>{
+        Momo(result).then(value => {
             res.json(value);
         })
-        
     });
-
 }
 
 module.exports.getOrder = async (req, res) => {
-    let order = await Order.findById({ _id: req.params.id }, (err, order) => {
+    await Order.findById({ _id: req.params.id }, (err, order) => {
         if (err) res.json(res);
         if (!order) { return res.json('Cant Find') }
         else {

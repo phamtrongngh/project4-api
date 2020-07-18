@@ -2,7 +2,6 @@ const Restaurant = require('../models/restaurant.model');
 const User = require("../models/user.model");
 module.exports.getRestaurants = async (req, res) => {
     var restaurant = await Restaurant.find();
-
     res.json(restaurant);
 }
 
@@ -34,7 +33,7 @@ module.exports.getRestaurant = async (req, res) => {
         if (err) return res.json(err);
         if (!restaurant) { return res.json('Cant Find') }
         else {
-            res.json(restaurant);
+            res.json(restaurant.populate());
         }
     });
 }
@@ -55,7 +54,6 @@ module.exports.updateRestaurant = async (req, res) => {
         }
     });
 }
-
 
 module.exports.deleteRestaurant = async (req, res) => {
     let result = await Restaurant.deleteOne({ _id: req.params.id }).exec();

@@ -54,25 +54,7 @@ module.exports = async (order) => {
         }
     };
 
-    //Send the request and get the response
-    // var req = await https.request(options,  (res) => {
-    //     res.setEncoding('utf8');
-    //     res.on('data', async (body) => {
-    //         payUrl = await JSON.parse(body).payUrl;
-    //         console.log(body)
-    //     });
-    //     res.on('end', () => {
-    //         console.log('No more data in response.');
-    //     });
-    // });
-    // await req.on('error', (e) => {
-    //     console.log(`problem with request: ${e.message}`) ;
-    // });
-    // // write data to request body
-    // req.write(body);
-    // req.end();
-
-     function doRequest() {
+    function doRequest() {
         return new Promise((resolve, reject) => {
             https.request(options, (res) => {
                 res.setEncoding('utf8');
@@ -83,8 +65,8 @@ module.exports = async (order) => {
             }).write(body);
         })
     }
-    let result ;
-    await doRequest().then((resolve,reject)=>{
+    let result;
+    await doRequest().then((resolve, reject) => {
         result = JSON.parse(resolve).payUrl;
     })
     return result;

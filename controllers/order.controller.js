@@ -1,5 +1,5 @@
 const Order = require('../models/order.model');
-
+const User = require("../models/user.model");
 module.exports.getOrders = async (req, res) => {
     var order = await Order.find();
     res.json(order);
@@ -7,9 +7,13 @@ module.exports.getOrders = async (req, res) => {
 
 module.exports.createOrder = async (req, res) => {
     try {
-        const order = new Order(req.body)
-        await order.save((err, result) => {
+        const order = new Order(req.body);
+        order.user = req.user._id;
+        order.status = "finding";
+        await order.save( async (err, result) => {
             if (err) return res.json({ err });
+            req.user.orders.push(result._id);
+            await req.user.updateOne(req.user);
             res.json({ order: result });
         })
     }

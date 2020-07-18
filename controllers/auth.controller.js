@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
+const Shipper = require("../models/shipper.model");
 const jwt = require("jsonwebtoken");
 
 module.exports.register = async (req, res, next) => {
@@ -52,6 +53,71 @@ module.exports.logout = async (req, res) => {
     io.sockets.emit("messageServer", listUser);
     res.json("You have signed out!!!");
 }
+
+module.exports.loginShipper = async (req, res) => {
+    Shipper.findOne({ phone: req.body.phone }, (err, shipper) => {
+        if (err) res.json(err);
+        if (shipper != null) {
+            if (bcrypt.compareSync(req.body.password, shipper.password)) {
+                var io = req.app.locals.io;
+                if (!listUser.find(x => x.phone == shipper.phone)) {
+                    listUser.push(shipper);
+                }
+                var token = jwt.sign({ _id: shipper._id, fullname: shipper.fullname, shipper: true }, "project4foodtap", { algorithm: "HS256" });
+                io.on("connection", (socket) => {
+                    io.sockets.emit("messageServer", listUser);
+                })
+                res.json({ access_token: token });
+            }
+            else {
+                res.json({ message: "Wrong password" })
+            }
+        }
+        else {
+            res.json({ message: "Wrong username" });
+        }
+    })
+}
+module.exports.registerShipper = async (req, res) => {
+    Shipper.findOne({ phone: req.body.phone }, (err, shipper) => {
+        if (shipper == null) {
+            bcrypt.hash(req.body.password, 10, function (err, hash) {
+                if (err) return res.json(err);
+                const shipper = new Shipper(req.body);
+                shipper.password = hash;
+                shipper.save((err, result) => {
+                    if (err) return res.json({ err });
+                    res.json({ shipper: result });
+                    var io = req.app.locals.io;
+                    io.sockets.emit("messageRegister", "There some register");
+                })
+            })
+        } else {
+            res.json({ err: "Phone has been used" });
+        }
+    })
+}
+
+module.exports.logoutShipper = async (req, res) => {
+    Shipper.findOne({ phone: req.body.phone }, (err, shipper) => {
+        if (shipper == null) {
+            bcrypt.hash(req.body.password, 10, function (err, hash) {
+                if (err) return res.json(err);
+                const shipper = new Shipper(req.body);
+                shipper.password = hash;
+                shipper.save((err, result) => {
+                    if (err) return res.json({ err });
+                    res.json({ shipper: result });
+                    var io = req.app.locals.io;
+                    io.sockets.emit("messageRegister", "There some register");
+                })
+            })
+        } else {
+            res.json({ err: "Phone has been used" });
+        }
+    })
+}
+
 module.exports.isAuthenticated = (req, res, next) => {
     if (req.headers && req.headers.authorization && req.headers.authorization.split(" ")[0] == "JWT") {
         var jwtToken = req.headers.authorization.split(" ")[1];
@@ -59,14 +125,26 @@ module.exports.isAuthenticated = (req, res, next) => {
             if (err) {
                 res.status(401).json({ message: "Unauthorized" });
             } else {
-                User.findOne({ "_id": payload._id }, (err, user) => {
-                    if (user) {
-                        req.user = user;
-                        next();
-                    } else {
-                        res.status(401).json({ message: "Unauthorized user!" });
-                    }
-                })
+                if (!payload.shipper) {
+                    User.findOne({ "_id": payload._id }, (err, user) => {
+                        if (user) {
+                            req.user = user;
+                            next();
+                        } else {
+                            res.status(401).json({ message: "Unauthorized user!" });
+                        }
+                    })
+                }
+                else {
+                    Shipper.findOne({ "_id": payload._id }, (err, shipper) => {
+                        if (shipper) {
+                            req.shipper = shipper;
+                            next();
+                        } else {
+                            res.status(401).json({ message: "Unauthorized user!" });
+                        }
+                    })
+                }
             }
         })
     } else {

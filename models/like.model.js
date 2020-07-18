@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-let comment = new Schema({
+let like = new Schema({
     user:{
         type:Schema.Types.ObjectId,
         ref:"User"
@@ -8,11 +8,6 @@ let comment = new Schema({
     newfeed:{
         type:Schema.Types.ObjectId,
         ref:"Newfeed"
-    },
-    commentType:{
-        type:String,
-        enum:["text","image"]
-    },
-    content:String
+    }
 },{timestamps:true});
-module.exports = mongoose.model("Comment",comment,"Comment");
+module.exports = mongoose.model("Like",like,"Like");

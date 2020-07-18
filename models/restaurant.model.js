@@ -8,7 +8,13 @@ var restaurantSchema = new Schema({
                 type: Schema.Types.ObjectId,
                 ref: "User"
             },
-            role: Boolean //true = admin, false = mod
+            role: {
+                type: String,
+                enum: [
+                    "admin",
+                    "mod"
+                ]
+            }
         }
     ],
     newfeeds: [
@@ -25,7 +31,7 @@ var restaurantSchema = new Schema({
     ],
     address: String,
     verified: Boolean,
-    avatar: [String],
+    avatar: String,
     followers: [
         {
             type: Schema.Types.ObjectId,

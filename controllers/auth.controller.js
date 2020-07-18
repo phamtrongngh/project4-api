@@ -10,9 +10,11 @@ module.exports.register = async (req, res, next) => {
                 if (err) return next(err);
                 const user = new User(req.body);
                 user.password = hash;
+                user.avatar = "user-avatar-default.png";
                 user.save((err, result) => {
                     if (err) return res.json({ err });
-                    res.json({ user: result });
+                    var token = jwt.sign({ _id: user._id, fullname: user.fullname, admin: false, avatar:user.avatar }, "project4foodtap", { algorithm: "HS256" });
+                    res.json({ access_token: token });
                     var io = req.app.locals.io;
                     io.sockets.emit("messageRegister", "There some register");
                 })
@@ -32,7 +34,7 @@ module.exports.login = async (req, res) => {
                 if (!listUser.find(x => x.phone == user.phone)) {
                     listUser.push(user);
                 }
-                var token = jwt.sign({ _id: user._id, fullname: user.fullname, admin: false }, "project4foodtap", { algorithm: "HS256" });
+                var token = jwt.sign({ _id: user._id, fullname: user.fullname, admin: false, avatar:user.avatar }, "project4foodtap", { algorithm: "HS256" });
                 io.on("connection", (socket) => {
                     io.sockets.emit("messageServer", listUser);
                 })

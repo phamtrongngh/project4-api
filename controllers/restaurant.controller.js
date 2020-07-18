@@ -7,6 +7,7 @@ module.exports.getRestaurants = async (req, res) => {
 
 module.exports.createRestaurant = async (req, res) => {
     const restaurant = new Restaurant(req.body)
+    restaurant.avatar.push(req.file.path);
     await restaurant.save((err, result) => {
         if (err) return res.json({ err });
         res.json({ restaurant: result });

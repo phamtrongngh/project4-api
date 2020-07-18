@@ -25,10 +25,7 @@ var restaurantSchema = new Schema({
     ],
     address: String,
     verified: Boolean,
-    avatar: {
-        type: Schema.Types.ObjectId,
-        ref: "Image"
-    },
+    avatar: [String],
     followers: [
         {
             type: Schema.Types.ObjectId,

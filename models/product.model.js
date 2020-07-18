@@ -14,6 +14,7 @@ var productSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Restaurant"
     },
+    images: [String],
     rating: [
         {
             user: {

@@ -6,7 +6,7 @@ module.exports.getProducts = async (req, res) => {
 }
 
 module.exports.createProduct = async (req, res) => {
-    let product = new Product(req.body)
+    let product = new Product(req.body);
     product.image = req.file.path.split("\\").splice(2).join("");
     await product.save((err, result) => {
         if (err) return res.json({ err });

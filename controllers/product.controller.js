@@ -6,17 +6,12 @@ module.exports.getProducts = async (req, res) => {
 }
 
 module.exports.createProduct = async (req, res) => {
-    try {
-        const product = new Product(req.body)
-        product.images.push(req.file.path);
-        await product.save((err, result) => {
-            if (err) return res.json({ err });
-            res.json({ product: result });
-        })
-    }
-    catch (error) {
-        res.status(500).send(error)
-    }
+    let product = new Product(req.body)
+    product.image = req.file.path.split("\\").splice(2).join("");
+    await product.save((err, result) => {
+        if (err) return res.json({ err });
+        res.json({ product: result });
+    })
 }
 
 module.exports.getProduct = async (req, res) => {

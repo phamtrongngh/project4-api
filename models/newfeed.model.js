@@ -9,6 +9,10 @@ var newfeedSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Restaurant"
     },
+    product:{
+        type:Schema.Types.ObjectId,
+        ref:"Product"
+    },
     content: String,
     images: [String],
     likes: [

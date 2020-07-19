@@ -7,7 +7,13 @@ module.exports.getUsers = async (req, res) => {
     res.json(users);
 }
 module.exports.getUser = async (req,res) =>{
-    return res.json(User.findOne({_id:req.params.id}));
+    await User.findById({ _id: req.params.id }, (err, user) => {
+        if (err) res.json(res);
+        if (!user) { return res.json('Cant Find') }
+        else {
+            res.json(user);
+        }
+    });
 }
 module.exports.updateUser = async (req, res) => {
     User.findById(req.body._id, (err, user) => {

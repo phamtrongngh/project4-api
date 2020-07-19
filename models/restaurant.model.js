@@ -2,6 +2,7 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 var restaurantSchema = new Schema({
     name: String,
+    description: String,
     managers: [
         {
             user: {
@@ -32,6 +33,7 @@ var restaurantSchema = new Schema({
     address: String,
     verified: Boolean,
     avatar: String,
+    licenseImage: String,
     followers: [
         {
             type: Schema.Types.ObjectId,

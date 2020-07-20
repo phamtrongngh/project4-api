@@ -4,11 +4,10 @@ let restaurantController = require("../controllers/restaurant.controller");
 
 let upload = require("../controllers/upload.controller");
 
-let restaurantUpload = upload.single('avatar');
-
+router.get("/getMyRestaurants",restaurantController.getMyRestaurants);
 router.get("/",restaurantController.getRestaurants);
 router.get("/:id", restaurantController.getRestaurant);
-router.post("/",restaurantUpload , restaurantController.createRestaurant);
+router.post("/",upload.any(), restaurantController.createRestaurant);
 router.put("/",restaurantController.updateRestaurant);
 router.delete("/:id", restaurantController.deleteRestaurant);
 

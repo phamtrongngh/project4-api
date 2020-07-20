@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const cookieParser = require("cookie-parser");
 mongoose.connect("mongodb://localhost:27017/foodtap", { useNewUrlParser: true, useUnifiedTopology: true });
 
 const userRoute = require("./routes/user.route.js");
@@ -15,9 +14,7 @@ const shipperRoute = require("./routes/shipper.route");
 const orderRoute = require("./routes/order.route")
 const authRoute = require("./routes/auth.route");
 const messageRoute = require("./routes/message.route");
-app.use(cookieParser());
 app.use(bodyParser.json());
-
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 io.on("connection",function(socket){

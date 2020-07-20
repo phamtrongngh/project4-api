@@ -6,7 +6,7 @@ module.exports.getRestaurants = async (req, res) => {
 }
 
 module.exports.createRestaurant = async (req, res) => {
-
+    req.body = JSON.parse(req.body.restaurant);
     await Restaurant.findOne({ name: req.body.name }, (err, restaurant) => {
         if (restaurant == null) {
             restaurant = new Restaurant(req.body);
@@ -14,7 +14,8 @@ module.exports.createRestaurant = async (req, res) => {
                 user: req.user._id,
                 role: "admin"
             });
-            restaurant.avatar.push(req.file.path);
+            restaurant.avatar = req.files[0].path.split("\\")[2];
+            restaurant.licenseImage = req.files[1].path.split("\\")[2];
             restaurant.save((err, result) => {
                 if (err) return res.json({ err });
                 User.findOne({ _id: result.managers[0].user.toString() }, async (err, user) => {
@@ -38,6 +39,23 @@ module.exports.getRestaurant = async (req, res) => {
     });
 }
 
+module.exports.getMyRestaurants = async (req, res) => {
+    await User.findOne(req.user._id,"restaurants -_id",(err,user)=>{
+        user.populate({
+            path: "restaurants",
+            select:"name avatar verified",
+            populate: {
+                path: "managers",
+                populate: {
+                    path: "user",
+                    select:"fullname"
+                }
+            }
+        }, (err, doc) => {
+            return res.json(doc.restaurants);
+        })
+    })
+}
 
 module.exports.updateRestaurant = async (req, res) => {
     Restaurant.findById(req.body._id, (err, restaurant) => {

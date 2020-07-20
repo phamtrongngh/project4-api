@@ -6,7 +6,7 @@ module.exports.getUsers = async (req, res) => {
     var users = await User.find();
     res.json(users);
 }
-module.exports.getUser = async (req,res) =>{
+module.exports.getUser = async (req, res) => {
     await User.findById({ _id: req.params.id }, (err, user) => {
         if (err) res.json(res);
         if (!user) { return res.json('Cant Find') }
@@ -86,13 +86,15 @@ module.exports.comment = async (req, res) => {
             user.comments.push(doc);
             await user.updateOne(user);
         })
-        Newfeed.findById(doc.newfeed, async (err,newfeed)=>{
+        Newfeed.findById(doc.newfeed, async (err, newfeed) => {
             newfeed.comments.push(doc);
             await newfeed.updateOne(newfeed);
         })
         return res.json(doc);
     })
 }
+
+
 
 module.exports.like = async (req, res) => {
     let like = new Like(req.body);
@@ -103,7 +105,7 @@ module.exports.like = async (req, res) => {
             user.likes.push(doc);
             await user.updateOne(user);
         })
-        Newfeed.findById(doc.newfeed, async (err,newfeed)=>{
+        Newfeed.findById(doc.newfeed, async (err, newfeed) => {
             newfeed.likes.push(doc);
             await newfeed.updateOne(newfeed);
         })

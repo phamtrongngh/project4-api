@@ -15,6 +15,16 @@ module.exports.getUser = async (req, res) => {
         }
     });
 }
+
+module.exports.getMyUser = async (req, res) => {
+    let select = "fullname newfeeds friends avatar description";
+    await User.findOne(req.user._id, select, (err, user) => {
+        if (err) return res.json(err);
+        return res.json(user);
+    })
+
+}
+
 module.exports.updateUser = async (req, res) => {
     User.findById(req.body._id, (err, user) => {
         if (err) res.json(err)

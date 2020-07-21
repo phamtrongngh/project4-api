@@ -21,7 +21,6 @@ module.exports.createRestaurant = async (req, res) => {
             }else{
                 restaurant.avatar = avatar.path.split("\\")[2];
             }
-
             let licenseImage = req.files.find(x=>x.fieldname=="licenseImage");
             if (licenseImage) {
                 restaurant.licenseImage = licenseImage.path.split("\\")[2];

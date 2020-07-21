@@ -14,8 +14,19 @@ module.exports.createRestaurant = async (req, res) => {
                 user: req.user._id,
                 role: "admin"
             });
-            restaurant.avatar = req.files[0].path.split("\\")[2];
-            restaurant.licenseImage = req.files[1].path.split("\\")[2];
+
+            let avatar = req.files.find(x=>x.fieldname=="avatar");
+            if (!avatar){
+                restaurant.avatar = "deufault-logo-restaurant.jpg";
+            }else{
+                restaurant.avatar = avatar.path.split("\\")[2];
+            }
+
+            let licenseImage = req.files.find(x=>x.fieldname=="licenseImage");
+            if (licenseImage) {
+                restaurant.licenseImage = licenseImage.path.split("\\")[2];
+            }
+            restaurant.active = true;
             restaurant.save((err, result) => {
                 if (err) return res.json({ err });
                 User.findOne({ _id: result.managers[0].user.toString() }, async (err, user) => {
@@ -40,15 +51,16 @@ module.exports.getRestaurant = async (req, res) => {
 }
 
 module.exports.getMyRestaurants = async (req, res) => {
-    await User.findOne(req.user._id,"restaurants -_id",(err,user)=>{
+    await User.findOne(req.user._id, "restaurants -_id", (err, user) => {
         user.populate({
             path: "restaurants",
-            select:"name avatar verified",
+            select: "name avatar verified",
+            match: { active: true },
             populate: {
                 path: "managers",
                 populate: {
                     path: "user",
-                    select:"fullname"
+                    select: "fullname"
                 }
             }
         }, (err, doc) => {
@@ -74,6 +86,8 @@ module.exports.updateRestaurant = async (req, res) => {
 }
 
 module.exports.deleteRestaurant = async (req, res) => {
-    let result = await Restaurant.deleteOne({ _id: req.params.id }).exec();
-    res.json(result);
+    await Restaurant.deleteOne({ _id: req.params.id }, (err) => {
+        if (err) return res.json(err);
+
+    });
 }

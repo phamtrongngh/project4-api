@@ -31,6 +31,7 @@ var restaurantSchema = new Schema({
         }
     ],
     address: String,
+    active:Boolean,
     verified: Boolean,
     avatar: String,
     licenseImage: String,

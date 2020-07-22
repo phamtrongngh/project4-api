@@ -22,7 +22,6 @@ module.exports.getMyUser = async (req, res) => {
         if (err) return res.json(err);
         return res.json(user);
     })
-
 }
 
 module.exports.updateUser = async (req, res) => {

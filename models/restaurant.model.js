@@ -30,8 +30,14 @@ var restaurantSchema = new Schema({
             ref: "Product"
         }
     ],
+    orders: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Order"
+        }
+    ],
     address: String,
-    active:Boolean,
+    active: Boolean,
     verified: Boolean,
     avatar: String,
     licenseImage: String,

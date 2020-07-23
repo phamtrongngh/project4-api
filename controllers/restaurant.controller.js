@@ -15,13 +15,13 @@ module.exports.createRestaurant = async (req, res) => {
                 role: "admin"
             });
 
-            let avatar = req.files.find(x=>x.fieldname=="avatar");
-            if (!avatar){
+            let avatar = req.files.find(x => x.fieldname == "avatar");
+            if (!avatar) {
                 restaurant.avatar = "deufault-logo-restaurant.jpg";
-            }else{
+            } else {
                 restaurant.avatar = avatar.path.split("\\")[2];
             }
-            let licenseImage = req.files.find(x=>x.fieldname=="licenseImage");
+            let licenseImage = req.files.find(x => x.fieldname == "licenseImage");
             if (licenseImage) {
                 restaurant.licenseImage = licenseImage.path.split("\\")[2];
             }
@@ -39,6 +39,7 @@ module.exports.createRestaurant = async (req, res) => {
         }
     })
 }
+
 module.exports.getRestaurant = async (req, res) => {
     await Restaurant.findById({ _id: req.params.id }, (err, restaurant) => {
         if (err) return res.json(err);
@@ -67,7 +68,14 @@ module.exports.getMyRestaurants = async (req, res) => {
         })
     })
 }
-
+module.exports.manageMyRestaurant = async (req, res) => {
+    let idRestaurant = req.params.id;
+    if (req.user.restaurants.find(x => x == idRestaurant)) {
+        let restaurant =await Restaurant.findOne({ _id: idRestaurant })
+                                        .populate(["menus","orders"]); 
+        return res.json(restaurant);
+    }
+}
 module.exports.updateRestaurant = async (req, res) => {
     Restaurant.findById(req.body._id, (err, restaurant) => {
         if (err) return res.json(err)

@@ -7,12 +7,7 @@ var userSchema = new Schema({
     description:String,
     fullname: String,
     email: String,
-    address: {
-        city: String, //Thanh pho
-        town: String, //Quan
-        ward: String, //Phuong
-        street: String //dia chi cu the tu viet
-    },
+    address: String,
     avatar: String,
     gender: Boolean,
     friends: [

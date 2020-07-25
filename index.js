@@ -42,5 +42,4 @@ app.use("/user",userRoute)
 server.listen(9032, () => {
     console.log("Server is running...");
 })
-global.listUser = [];
 app.locals.io = io;

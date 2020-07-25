@@ -1,14 +1,20 @@
 let User = require("../models/user.model");
 let Message = require("../models/message.model");
-let mongoose = require("mongoose");
 
 module.exports.getConversation = async (req, res) => {
-    User.findOne(req.user._id, (err, doc) => {
-        doc.populate("conversations.messages", (err, docPopulated) => {
-            return res.json(docPopulated.conversations
-                .find(x => x.user == req.params.id)
-                .messages);
-        })
+    let user = await User.findOne(req.user._id);
+    let conversation = user.conversations.find(x => x.user == req.params.id);
+    Message.find({
+        "_id": {
+            $in: conversation.messages
+        }
+    }, async (err, messages) => {
+        let UserB = await User.findOne({ _id: req.params.id }).select("avatar _id fullname")
+        let responseObj = {
+            messages: messages,
+            user: UserB
+        }
+        return res.json(responseObj);
     })
 }
 
@@ -26,6 +32,7 @@ module.exports.getListFriends = async (req, res) => {
 module.exports.sendMessage = async (req, res) => {
     let message = new Message(req.body);
     message.sender = req.user._id;
+    var io = req.app.locals.io;
     await message.save((err, doc) => {
         if (err) return res.json(err);
         doc.save(async (err, result) => {
@@ -54,6 +61,7 @@ module.exports.sendMessage = async (req, res) => {
                 }
                 await receiver.updateOne(receiver);
             })
+            io.sockets.emit("sendMessage", doc);
         })
     })
     return res.json("");

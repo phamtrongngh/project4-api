@@ -17,7 +17,7 @@ module.exports.getUser = async (req, res) => {
 }
 
 module.exports.getMyUser = async (req, res) => {
-    let select = "fullname newfeeds friends avatar description";
+    let select = "fullname newfeeds friends avatar description address phone";
     await User.findOne(req.user._id, select, (err, user) => {
         if (err) return res.json(err);
         return res.json(user);
@@ -25,16 +25,24 @@ module.exports.getMyUser = async (req, res) => {
 }
 
 module.exports.updateUser = async (req, res) => {
-    User.findById(req.body._id, (err, user) => {
+    req.body = JSON.parse(req.body.user);
+    User.findById(req.user._id, (err, user) => {
         if (err) res.json(err)
         if (!user) {
             return res.json('Cant Find');
         }
         else {
-            user.set(req.body);
+            user.address = req.body.address;
+            let avatar = req.file;
+            if (!avatar) {
+                user.avatar = "user-avatar-default.png";
+            } else {
+                user.avatar = avatar.path.split("\\")[2];
+            }
+            user.fullname=req.body.fullname;
             user.updateOne(user, (err, raw) => {
                 if (err) return res.json(err);
-                return res.json(raw)
+                return res.json(user);
             })
         }
     });

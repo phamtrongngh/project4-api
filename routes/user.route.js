@@ -1,10 +1,11 @@
 let express = require("express");
 let router = express.Router();
 let userController = require("../controllers/user.controller.js");
+let upload = require("../controllers/upload.controller");
 router.get("/",userController.getUsers);
 router.get("/getMyUser",userController.getMyUser);
 router.get("/:id",userController.getUser);
-router.put("/",userController.updateUser);
+router.put("/",upload.single("avatar"),userController.updateUser);
 router.post("/requestFriend/:id",userController.requestFriend);
 router.post("/cancelRequest/:id",userController.cancelRequest);
 router.post("/acceptRequest/:id",userController.acceptRequest);

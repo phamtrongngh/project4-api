@@ -34,7 +34,7 @@ module.exports.login = async (req, res) => {
                 var token = jwt.sign({ id: user._id, fullname: user.fullname, admin: false, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });
                 var io = req.app.locals.io;
                 io.on("connection", (socket) => {
-                    io.sockets.emit("messageServer", listUser);
+                    io.sockets.emit("connection");
                 })
                 res.json({ access_token: token });
             }
@@ -48,9 +48,6 @@ module.exports.login = async (req, res) => {
     })
 }
 module.exports.logout = async (req, res) => {
-    var io = req.app.locals.io;
-    listUser.splice(listUser.indexOf(listUser.find((x) => x.phone == req.body.phone)), 1);
-    io.sockets.emit("messageServer", listUser);
     res.json("You have signed out!!!");
 }
 
@@ -60,12 +57,9 @@ module.exports.loginShipper = async (req, res) => {
         if (shipper != null) {
             if (bcrypt.compareSync(req.body.password, shipper.password)) {
                 var io = req.app.locals.io;
-                if (!listUser.find(x => x.phone == shipper.phone)) {
-                    listUser.push(shipper);
-                }
                 var token = jwt.sign({ _id: shipper._id, fullname: shipper.fullname, shipper: true }, "project4foodtap", { algorithm: "HS256" });
                 io.on("connection", (socket) => {
-                    io.sockets.emit("messageServer", listUser);
+                    io.sockets.emit("messageServer");
                 })
                 res.json({ access_token: token });
             }
@@ -89,7 +83,9 @@ module.exports.registerShipper = async (req, res) => {
                     if (err) return res.json({ err });
                     res.json({ shipper: result });
                     var io = req.app.locals.io;
-                    io.sockets.emit("messageRegister", "There some register");
+                    io.on("connection", (socket) => {
+                        io.sockets.emit("messageRegister", "There some register");
+                    })
                 })
             })
         } else {
@@ -131,7 +127,7 @@ module.exports.isAuthenticated = (req, res, next) => {
                             req.user = user;
                             var io = req.app.locals.io;
                             io.on("connection", (socket) => {
-                                io.sockets.emit("connected",user.fullname +" just has been online");
+                                io.sockets.emit("connected", user.fullname + " just has been online");
                             })
                             next();
                         } else {

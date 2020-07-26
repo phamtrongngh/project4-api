@@ -39,7 +39,7 @@ module.exports.updateUser = async (req, res) => {
             } else {
                 user.avatar = avatar.path.split("\\")[2];
             }
-            user.fullname=req.body.fullname;
+            user.fullname = req.body.fullname;
             user.updateOne(user, (err, raw) => {
                 if (err) return res.json(err);
                 return res.json(user);
@@ -111,8 +111,32 @@ module.exports.comment = async (req, res) => {
     })
 }
 
+module.exports.addToCart = async (req, res) => {
+    let objCart = {
+        product: req.body.product,
+        quantity: req.body.quantity
+    }
+    var check;
+    req.user.cart.forEach(x=>{
+        if (x.product.toString()==objCart.product){
+            x.product=objCart.product;
+            x.quantity=objCart.quantity;
+            check=false;
+        }
+    })
+    if (check) req.user.cart.push(objCart);
+    await req.user.updateOne(req.user);
+    return res.json("Đã thêm món vào giỏ hàng");
+}
+module.exports.getCart = async (req, res) => {
+    let user = await User.findOne({ _id: req.user._id })
+        .select("fullname phone cart address");
+    user.populate("cart.product",(err,doc)=>{
+        return res.json(doc);
+    })
 
 
+}
 module.exports.like = async (req, res) => {
     let like = new Like(req.body);
     like.user = req.user._id;

@@ -1,9 +1,12 @@
 const Newfeed = require('../models/newfeed.model');
 const Product = require("../models/product.model");
 const Restaurant = require("../models/restaurant.model");
+
 module.exports.getNewfeeds = async (req, res) => {
-    let newfeed = await Newfeed.find();
-    res.json(newfeed);
+    // await Newfeed.find((err,arr)=>{
+    //     return res.json(arr)
+    // })
+    res.json(await Newfeed.find().populate("restaurant"));
 }
 
 module.exports.createNewfeed = async (req, res) => {

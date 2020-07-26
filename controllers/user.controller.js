@@ -116,7 +116,7 @@ module.exports.addToCart = async (req, res) => {
         product: req.body.product,
         quantity: req.body.quantity
     }
-    var check;
+    var check=true;
     req.user.cart.forEach(x=>{
         if (x.product.toString()==objCart.product){
             x.product=objCart.product;

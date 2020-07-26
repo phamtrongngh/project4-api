@@ -4,7 +4,7 @@ var userSchema = new Schema({
     phone: String,
     password: String,
     dob: Date,
-    description:String,
+    description: String,
     fullname: String,
     email: String,
     address: String,
@@ -38,10 +38,19 @@ var userSchema = new Schema({
             ref: "Comment"
         }
     ],
-    orders:[
+    orders: [
         {
-            type:Schema.Types.ObjectId,
-            ref:"Order"
+            type: Schema.Types.ObjectId,
+            ref: "Order"
+        }
+    ],
+    cart: [
+        {
+            product: {
+                type: Schema.Types.ObjectId,
+                ref: "Product"
+            },
+            quantity:Number
         }
     ],
     conversations: [

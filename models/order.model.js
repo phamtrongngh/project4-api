@@ -14,12 +14,8 @@ let order = new Schema({
             quantity: Number
         }
     ],
-    address: {
-        city: String, // Thanh pho
-        town: String, // Quan
-        ward: String, // Phuong
-        street: String // Dia chi cu the tu viet
-    },
+    note:String,
+    address: String,
     amount: Number, //Tổng số tiền
     shipper: {
         type: Schema.Types.ObjectId,

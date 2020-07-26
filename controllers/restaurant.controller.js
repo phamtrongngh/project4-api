@@ -1,5 +1,6 @@
 const Restaurant = require('../models/restaurant.model');
 const User = require("../models/user.model");
+
 module.exports.getRestaurants = async (req, res) => {
     var restaurant = await Restaurant.find();
     res.json(restaurant);
@@ -74,6 +75,9 @@ module.exports.manageMyRestaurant = async (req, res) => {
         let restaurant =await Restaurant.findOne({ _id: idRestaurant })
                                         .populate(["menus","orders","newfeeds","followers"]); 
         return res.json(restaurant);
+    }
+    else{
+        return res.json("Bạn không có quyền");
     }
 }
 module.exports.updateRestaurant = async (req, res) => {

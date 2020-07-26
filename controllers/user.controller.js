@@ -128,6 +128,14 @@ module.exports.addToCart = async (req, res) => {
     await req.user.updateOne(req.user);
     return res.json("Đã thêm món vào giỏ hàng");
 }
+module.exports.removeFromCart = async (req, res) => {
+    let id = req.params.id;
+    let item = req.user.cart.find(x=>x.product==id);
+    let index = req.user.cart.indexOf(item);
+    req.user.cart.splice(index,1);
+    await req.user.updateOne(req.user);
+    return res.json("Đã thêm món vào giỏ hàng");
+}
 module.exports.getCart = async (req, res) => {
     let user = await User.findOne({ _id: req.user._id })
         .select("fullname phone cart address");

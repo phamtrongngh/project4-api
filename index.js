@@ -17,19 +17,10 @@ const messageRoute = require("./routes/message.route");
 app.use(bodyParser.json());
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
-io.on("connection",function(socket){
-    socket.on("clientTyping",(data)=>{
-        if (data){
-            socket.broadcast.emit("serverTyping","block");
-        }
-        else{
-            socket.broadcast.emit("serverTyping","none");
-        }
-    })
-})
+
 
 app.use("/authorization", authRoute);
-app.use("/public",express.static("public"));
+app.use("/public/",express.static("public"));
 app.use(authController.isAuthenticated);
 app.use("/message",messageRoute);
 app.use("/newfeed", newfeedRoute);

@@ -72,7 +72,7 @@ module.exports.manageMyRestaurant = async (req, res) => {
     let idRestaurant = req.params.id;
     if (req.user.restaurants.find(x => x == idRestaurant)) {
         let restaurant =await Restaurant.findOne({ _id: idRestaurant })
-                                        .populate(["menus","orders"]); 
+                                        .populate(["menus","orders","newfeeds","followers"]); 
         return res.json(restaurant);
     }
 }

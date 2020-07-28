@@ -15,7 +15,6 @@ const orderRoute = require("./routes/order.route")
 const authRoute = require("./routes/auth.route");
 const messageRoute = require("./routes/message.route");
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:false}));
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 

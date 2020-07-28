@@ -13,7 +13,7 @@ module.exports.register = async (req, res, next) => {
                 user.avatar = "user-avatar-default.png";
                 user.save((err, result) => {
                     if (err) return res.json({ err });
-                    var token = jwt.sign({ _id: user._id, fullname: user.fullname, admin: false, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });
+                    var token = jwt.sign({ _id: user._id, cart: user.cart.length, fullname: user.fullname, admin: false, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });
                     res.json({ access_token: token });
 
                 })
@@ -29,7 +29,7 @@ module.exports.login = async (req, res) => {
         if (err) res.json(err);
         if (user != null) {
             if (bcrypt.compareSync(req.body.password, user.password)) {
-                var token = jwt.sign({ _id: user._id, fullname: user.fullname, admin: false, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });
+                var token = jwt.sign({ _id: user._id, cart: user.cart.length, fullname: user.fullname, admin: false, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });
                 // var io = req.app.locals.io;
                 // io.on("connection", (socket) => {
                 //     io.sockets.emit("connection");

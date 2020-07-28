@@ -27,7 +27,7 @@ let order = new Schema({
     },
     status: {
         type: String,
-        enum: ["finding","receiving, delivering, completed, canceled"]
+        enum: ["paying","finding","receiving, delivering, completed, canceled"]
     }
 }, { timestamps: true });
 module.exports = mongoose.model("Order", order, "Order");

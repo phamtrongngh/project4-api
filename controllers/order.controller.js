@@ -14,7 +14,12 @@ module.exports.getFindingOrders = async (req, res) =>{
 module.exports.createOrder = async (req, res) => {
     let order = new Order(req.body);
     order.user = req.user._id;
-    order.status = "finding";
+    if (req.body.payment == "2") {
+        order.status = "paying";
+    } else {
+        order.status = "finding";
+    }
+
     await Product.find({
         "_id": {
             $in: req.body.products.map(x => x.product)
@@ -27,12 +32,28 @@ module.exports.createOrder = async (req, res) => {
         if (err) return res.json({ err });
         req.user.orders.push(result._id);
         await req.user.updateOne(req.user);
-        Momo(result).then(value => {
-            res.json(value);
-        })
+        if (result.status == "paying") {
+            Momo(result).then(value => {
+                return res.json(value);
+            })
+        } else {
+            var io = req.app.locals.io;
+            io.sockets.emit("newOrder", result);
+            return res.json("/");
+        }
     });
 }
-
+module.exports.paying = async (req, res) => {
+    let orderId = req.params.id;
+    var io = req.app.locals.io;
+    await Order.findOne({ _id: orderId }, async (err, order) => {
+        order.status = "finding";
+        await order.updateOne(order);
+        io.sockets.emit("newOrder", order);
+        return res.json("success");
+    })
+    return res.json("failed");
+}
 module.exports.getOrder = async (req, res) => {
     await Order.findById({ _id: req.params.id }, (err, order) => {
         if (err) res.json(res);

@@ -8,12 +8,11 @@ module.exports = async (order) => {
     var partnerCode = "MOMO8BMH20200717";
     var accessKey = "PBVVK360866h4btk";
     var serectkey = "s6PUjXvY6zjpqjhLFMfvbgcRJfzmcgVn";
-    var orderInfo = "Thanh toán bằng ví Momo";
+    var orderInfo = "Thanh toán Foodtap với ví Momo";
     var returnUrl = "http://localhost:8080";
     var notifyurl = "http://localhost:8080";
     var amount = order.amount.toString();
-    // var orderId = order._id;
-    var orderId = uuidv1();
+    var orderId = order._id;
     var requestId = uuidv1();
     var requestType = "captureMoMoWallet";
     var extraData = "merchantName=;merchantId="; //pass empty value if your merchant does not have stores else merchantName=[storeName]; merchantId=[storeId] to identify a transaction map with a physical store

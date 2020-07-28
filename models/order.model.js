@@ -14,6 +14,10 @@ let order = new Schema({
             quantity: Number
         }
     ],
+    restaurant:{
+        type:Schema.Types.ObjectId,
+        ref:"Restaurant"
+    },
     note:String,
     address: String,
     amount: Number, //Tổng số tiền

@@ -42,15 +42,27 @@ module.exports.createRestaurant = async (req, res) => {
 }
 
 module.exports.getRestaurant = async (req, res) => {
-    await Restaurant.findById({ _id: req.params.id }, (err, restaurant) => {
+    await Restaurant.findById({ _id: req.params.id }, async (err, restaurant) => {
         if (err) return res.json(err);
         if (!restaurant) { return res.json('Cant Find') }
         else {
-            res.json(restaurant.populate());
+            await restaurant.populate("newfeeds", (err, result) => {
+                return res.json(result);
+            })
         }
     });
 }
-
+module.exports.getMenu = async (req, res) => {
+    await Restaurant.findById({ _id: req.params.id }, async (err, restaurant) => {
+        if (err) return res.json(err);
+        if (!restaurant) { return res.json('Cant Find') }
+        else {
+            await restaurant.populate("menus", (err, result) => {
+                return res.json(result);
+            })
+        }
+    });
+}
 module.exports.getMyRestaurants = async (req, res) => {
     await User.findOne(req.user._id, "restaurants -_id", (err, user) => {
         user.populate({
@@ -72,11 +84,11 @@ module.exports.getMyRestaurants = async (req, res) => {
 module.exports.manageMyRestaurant = async (req, res) => {
     let idRestaurant = req.params.id;
     if (req.user.restaurants.find(x => x == idRestaurant)) {
-        let restaurant =await Restaurant.findOne({ _id: idRestaurant })
-                                        .populate(["menus","orders","newfeeds","followers"]); 
+        let restaurant = await Restaurant.findOne({ _id: idRestaurant })
+            .populate(["menus", "orders", "newfeeds", "followers"]);
         return res.json(restaurant);
     }
-    else{
+    else {
         return res.json("Bạn không có quyền");
     }
 }

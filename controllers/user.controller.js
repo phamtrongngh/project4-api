@@ -17,10 +17,12 @@ module.exports.getUser = async (req, res) => {
 }
 
 module.exports.getMyUser = async (req, res) => {
-    let select = "fullname newfeeds friends avatar description address phone";
+    let select = "fullname orders newfeeds friends avatar description address phone";
     await User.findOne(req.user._id, select, (err, user) => {
         if (err) return res.json(err);
-        return res.json(user);
+        user.populate(["orders"], (err, result) => {
+            return res.json(result);
+        })
     })
 }
 
@@ -116,31 +118,35 @@ module.exports.addToCart = async (req, res) => {
         product: req.body.product,
         quantity: req.body.quantity
     }
-    var check=true;
-    req.user.cart.forEach(x=>{
-        if (x.product.toString()==objCart.product){
-            x.product=objCart.product;
-            x.quantity=objCart.quantity;
-            check=false;
+    var check = true;
+    req.user.cart.forEach(x => {
+        if (x.product.toString() == objCart.product) {
+            x.product = objCart.product;
+            x.quantity = objCart.quantity;
+            check = false;
         }
     })
     if (check) req.user.cart.push(objCart);
     await req.user.updateOne(req.user);
-    return res.json("Đã thêm món vào giỏ hàng");
+    let size = req.user.cart.length;
+    return res.json(size);
+
 }
 module.exports.removeFromCart = async (req, res) => {
     let id = req.params.id;
-    let item = req.user.cart.find(x=>x.product==id);
+    let item = req.user.cart.find(x => x.product == id);
     let index = req.user.cart.indexOf(item);
-    req.user.cart.splice(index,1);
+    req.user.cart.splice(index, 1);
     await req.user.updateOne(req.user);
     return res.json("Đã thêm món vào giỏ hàng");
 }
 module.exports.getCart = async (req, res) => {
     let user = await User.findOne({ _id: req.user._id })
-        .select("fullname phone cart address");
-    user.populate("cart.product",(err,doc)=>{
-        return res.json(doc);
+        .select("fullname phone cart address _id");
+    user.populate("cart.product", async (err, doc) => {
+        doc.populate("cart.product.restaurant","name", (err, result) => {
+            return res.json(result);
+        })
     })
 
 

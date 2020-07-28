@@ -9,8 +9,8 @@ module.exports = async (order) => {
     var accessKey = "PBVVK360866h4btk";
     var serectkey = "s6PUjXvY6zjpqjhLFMfvbgcRJfzmcgVn";
     var orderInfo = "Thanh toán Foodtap với ví Momo";
-    var returnUrl = "http://localhost:8080";
-    var notifyurl = "http://localhost:8080";
+    var returnUrl = "http://localhost:8080/order/paying";
+    var notifyurl = "http://localhost:8080/order/paying";
     var amount = order.amount.toString();
     var orderId = order._id;
     var requestId = uuidv1();

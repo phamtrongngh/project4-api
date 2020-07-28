@@ -143,8 +143,10 @@ module.exports.removeFromCart = async (req, res) => {
 module.exports.getCart = async (req, res) => {
     let user = await User.findOne({ _id: req.user._id })
         .select("fullname phone cart address _id");
-    user.populate("cart.product", (err, doc) => {
-        return res.json(doc);
+    user.populate("cart.product", async (err, doc) => {
+        doc.populate("cart.product.restaurant","name", (err, result) => {
+            return res.json(result);
+        })
     })
 
 

@@ -3,7 +3,12 @@ const Product = require("../models/product.model");
 const Momo = require("../momo.util/momo");
 module.exports.getOrders = async (req, res) => {
     var order = await Order.find();
-    res.json(order);
+    return res.json(order);
+}
+
+module.exports.getFindingOrders = async (req, res) =>{
+    var order = await Order.find({status: "finding"});
+    return res.json(order);
 }
 
 module.exports.createOrder = async (req, res) => {

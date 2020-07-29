@@ -144,7 +144,7 @@ module.exports.getCart = async (req, res) => {
     let user = await User.findOne({ _id: req.user._id })
         .select("fullname phone cart address _id");
     user.populate("cart.product", async (err, doc) => {
-        doc.populate("cart.product.restaurant","name", (err, result) => {
+        doc.populate("cart.product.restaurant","name address", (err, result) => {
             return res.json(result);
         })
     })

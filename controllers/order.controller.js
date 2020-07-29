@@ -1,13 +1,14 @@
 const Order = require('../models/order.model');
 const Product = require("../models/product.model");
 const Momo = require("../momo.util/momo");
+
 module.exports.getOrders = async (req, res) => {
     var order = await Order.find();
     return res.json(order);
 }
 
-module.exports.getFindingOrders = async (req, res) =>{
-    var order = await Order.find({status: "finding"});
+module.exports.getFindingOrders = async (req, res) => {
+    var order = await Order.find({ status: "finding" });
     return res.json(order);
 }
 
@@ -47,13 +48,16 @@ module.exports.paying = async (req, res) => {
     let orderId = req.params.id;
     var io = req.app.locals.io;
     await Order.findOne({ _id: orderId }, async (err, order) => {
+        if (err) {
+            return res.json("failed");
+        }
         order.status = "finding";
         await order.updateOne(order);
         io.sockets.emit("newOrder", order);
         return res.json("success");
     })
-    return res.json("failed");
 }
+
 module.exports.getOrder = async (req, res) => {
     await Order.findById({ _id: req.params.id }, (err, order) => {
         if (err) res.json(res);

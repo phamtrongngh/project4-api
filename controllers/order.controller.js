@@ -14,6 +14,7 @@ module.exports.getFindingOrders = async (req, res) =>{
 module.exports.createOrder = async (req, res) => {
     let order = new Order(req.body);
     order.user = req.user._id;
+    var io = req.app.locals.io;
     if (req.body.payment == "2") {
         order.status = "paying";
     } else {
@@ -37,7 +38,6 @@ module.exports.createOrder = async (req, res) => {
                 return res.json(value);
             })
         } else {
-            var io = req.app.locals.io;
             io.sockets.emit("newOrder", result);
             return res.json("/");
         }

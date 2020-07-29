@@ -52,15 +52,17 @@ module.exports.deleteShipper = async (req, res) => {
 module.exports.acceptOrder = async (req, res) => {
     let idOrder = req.params.id;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
+        
         if (order.shipper) {
-            return res.json("Đơn hàng này đã được shipper khác nhận.");
+            return res.json(order);
         } else {
             order.shipper = req.shipper._id;
             order.status = "receiving";
             await order.updateOne(order, async (err, raw) => {
                 req.shipper.orders.push(idOrder);
                 await req.shipper.updateOne(req.shipper);
-                return res.json("Bạn đã nhận đơn hàng.");
+                console.log(order.shipper);
+                return res.json(order);
             });
         }
     })

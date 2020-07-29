@@ -148,8 +148,6 @@ module.exports.getCart = async (req, res) => {
             return res.json(result);
         })
     })
-
-
 }
 module.exports.like = async (req, res) => {
     let like = new Like(req.body);

@@ -4,18 +4,27 @@ let Message = require("../models/message.model");
 module.exports.getConversation = async (req, res) => {
     let user = await User.findOne(req.user._id);
     let conversation = user.conversations.find(x => x.user == req.params.id);
-    Message.find({
-        "_id": {
-            $in: conversation.messages
-        }
-    }, async (err, messages) => {
+    if (conversation) {
+        Message.find({
+            "_id": {
+                $in: conversation.messages
+            }
+        }, async (err, messages) => {
+            let UserB = await User.findOne({ _id: req.params.id }).select("avatar _id fullname")
+            let responseObj = {
+                messages: messages,
+                user: UserB
+            }
+            return res.json(responseObj);
+        })
+    } else {
         let UserB = await User.findOne({ _id: req.params.id }).select("avatar _id fullname")
         let responseObj = {
-            messages: messages,
+            messages: [],
             user: UserB
         }
         return res.json(responseObj);
-    })
+    }
 }
 
 module.exports.getListFriends = async (req, res) => {
@@ -60,7 +69,11 @@ module.exports.sendMessage = async (req, res) => {
                     })
                 }
                 await receiver.updateOne(receiver);
-            })
+            });
+            // io.on("connection",function(socket){
+            //     console.log(socket.id);
+            //     socket.em
+            // })
             io.sockets.emit("sendMessage", doc);
         })
     })

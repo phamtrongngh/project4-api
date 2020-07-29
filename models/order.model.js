@@ -20,6 +20,8 @@ let order = new Schema({
     },
     note:String,
     address: String,
+    discount:Number,
+    fee:Number,
     amount: Number, //Tổng số tiền
     shipper: {
         type: Schema.Types.ObjectId,

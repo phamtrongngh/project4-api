@@ -25,12 +25,15 @@ app.use(authController.isAuthenticated);
 app.use("/message",messageRoute);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurantRoute);
-app.use("/product", productRoute)
-app.use("/foodcategory", foodCategoryRoute)
-app.use("/shipper", shipperRoute)
-app.use("/order", orderRoute)
-app.use("/user",userRoute)
+app.use("/product", productRoute);
+app.use("/foodcategory", foodCategoryRoute);
+app.use("/shipper", shipperRoute);
+app.use("/order", orderRoute);
+app.use("/user",userRoute);
 server.listen(9032, () => {
     console.log("Server is running...");
+})
+io.on("connection",function(socket){
+    console.log(socket.id);
 })
 app.locals.io = io;

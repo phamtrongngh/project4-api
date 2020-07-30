@@ -3,7 +3,9 @@ let router = express.Router();
 let shipperController = require("../controllers/shipper.controller");
 
 router.get("/",shipperController.getShippers);
-router.get("/getMyShipper", shipperController.getMyShipper)
+router.get("/getMyShipper", shipperController.getMyShipper);
+router.get("/getMyCompletedOrders", shipperController.getMyCompleteOrders)
+router.get("/getMyFailedOrders", shipperController.getMyFailedOrders)
 router.get("/:id", shipperController.getShipper);
 router.post("/",shipperController.createShipper);
 router.put("/",shipperController.updateShipper);

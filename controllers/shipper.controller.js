@@ -1,5 +1,6 @@
 const Shipper = require('../models/shipper.model');
 const Order = require("../models/order.model");
+const Restaurant = require("../models/restaurant.model");
 module.exports.getShippers = async (req, res) => {
     var shipper = await Shipper.find();
     res.json(shipper);
@@ -27,7 +28,22 @@ module.exports.getShipper = async (req, res) => {
         }
     });
 }
-
+module.exports.getMyCompleteOrders = async (req, res) => {
+    let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
+    await Restaurant.findById(order[0].products[0].product.restaurant, "name address", async (err, doc) => {
+        order = order.filter(x=>x.status=="completed");
+        order[0].restaurant =await  doc;
+    })
+    return res.json(order);
+}
+module.exports.getMyFailedOrders = async (req, res) => {
+    let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
+    await Restaurant.findById(order[0].products[0].product.restaurant, "name address", async (err, doc) => {
+        order = order.filter(x=>x.status=="failed");
+        order[0].restaurant = await doc;
+    })
+    return res.json(order);
+}
 module.exports.getMyShipper = async (req, res) => {
     await Shipper.findOne(req.shipper._id, (err, shipper) => {
         if (err) return res.json(err);

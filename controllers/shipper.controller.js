@@ -28,6 +28,13 @@ module.exports.getShipper = async (req, res) => {
     });
 }
 
+module.exports.getMyShipper = async (req, res) => {
+    await Shipper.findOne(req.shipper._id, (err, shipper) => {
+        if (err) return res.json(err);
+        return res.json(shipper);
+    })
+}
+
 module.exports.updateShipper = async (req, res) => {
     Shipper.findById(req.body._id, (err, shipper) => {
         if (err) res.json(err)

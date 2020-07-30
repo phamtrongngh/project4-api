@@ -18,14 +18,17 @@ module.exports.getUser = async (req, res) => {
 
 module.exports.getMyUser = async (req, res) => {
     let select = "fullname orders newfeeds friends avatar description address phone";
-    await User.findOne(req.user._id, select, (err, user) => {
+    await User.findOne(req.user._id, select, async (err, user) => {
         if (err) return res.json(err);
-        user.populate(["orders"], (err, result) => {
-            return res.json(result);
+        await user.populate("orders", async (err, result) => {
+            await result.populate("orders.products.product", async (err, doc) => {
+                await doc.populate("orders.products.product.restaurant", (err, doc2) => {
+                    return res.json(doc);
+                })
+            })
         })
     })
 }
-
 module.exports.updateUser = async (req, res) => {
     req.body = JSON.parse(req.body.user);
     User.findById(req.user._id, (err, user) => {
@@ -144,7 +147,7 @@ module.exports.getCart = async (req, res) => {
     let user = await User.findOne({ _id: req.user._id })
         .select("fullname phone cart address _id");
     user.populate("cart.product", async (err, doc) => {
-        doc.populate("cart.product.restaurant","name", (err, result) => {
+        doc.populate("cart.product.restaurant", "name address", (err, result) => {
             return res.json(result);
         })
     })

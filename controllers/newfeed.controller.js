@@ -1,7 +1,7 @@
 const Newfeed = require('../models/newfeed.model');
 const Product = require("../models/product.model");
 const Restaurant = require("../models/restaurant.model");
-
+const User = require("../models/user.model");
 module.exports.getNewfeeds = async (req, res) => {
     // await Newfeed.find((err,arr)=>{
     //     return res.json(arr)
@@ -10,13 +10,25 @@ module.exports.getNewfeeds = async (req, res) => {
 }
 
 module.exports.createNewfeed = async (req, res) => {
+    req.body = JSON.parse(req.body.newfeed);
     const newfeed = new Newfeed(req.body);
-    newfeed.images.push(req.file.path);
-    await newfeed.save((err, result) => {
-        if (err) { return res.json(err); }
-        else {
-            res.json({ newfeed: result });
+    let image = req.file;
+    if (image) {
+        newfeed.images.push(image.path.split("\\")[2]);
+    }
+    await newfeed.save(async (err, result) => {
+        if (err) return res.json(err);
+        await User.findOne({ _id: result.user }, async (err, user) => {
+            user.newfeeds.push(result._id);
+            await user.updateOne(user);
+        })
+        if (result.restaurant) {
+            await Restaurant.findOne({ _id: result.restaurant }, async (err, restaurant) => {
+                restaurant.newfeeds.push(result._id);
+                await restaurant.updateOne(restaurant);
+            })
         }
+        return res.json(result);
     })
 }
 module.exports.createFoodNewfeed = async (req, res) => {
@@ -25,7 +37,7 @@ module.exports.createFoodNewfeed = async (req, res) => {
     newfeed.images.push(product.image);
     newfeed.save(async (err, document) => {
         if (err) return res.json(err);
-        let restaurant = await Restaurant.findOne({_id:req.body.restaurant});
+        let restaurant = await Restaurant.findOne({ _id: req.body.restaurant });
         restaurant.newfeeds.push(document._id);
         await restaurant.updateOne(restaurant);
         return res.json(document);
@@ -40,7 +52,11 @@ module.exports.getNewfeed = async (req, res) => {
         }
     });
 }
-
+module.exports.getMyNewfeeds = async (req, res) => {
+    await req.user.populate("newfeeds", async (err,result)=>{
+        return await res.json(result);
+    })
+}
 module.exports.updateNewfeed = async (req, res) => {
     Newfeed.findById(req.body._id, (err, newfeed) => {
         if (err) res.json(err)

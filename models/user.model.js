@@ -10,6 +10,15 @@ var userSchema = new Schema({
     address: String,
     avatar: String,
     gender: Boolean,
+    draft: [
+        {
+            product: {
+                type: Schema.Types.ObjectId,
+                ref: "Product"
+            },
+            quantity: Number
+        }
+    ],
     friends: [
         {
             user: {
@@ -50,7 +59,7 @@ var userSchema = new Schema({
                 type: Schema.Types.ObjectId,
                 ref: "Product"
             },
-            quantity:Number
+            quantity: Number
         }
     ],
     conversations: [
@@ -70,7 +79,7 @@ var userSchema = new Schema({
     newfeeds: [
         {
             type: Schema.Types.ObjectId,
-            ref: "NewFeed"
+            ref: "Newfeed"
         }
     ],
     followers: [
@@ -83,6 +92,12 @@ var userSchema = new Schema({
         {
             type: Schema.Types.ObjectId,
             ref: "User"
+        }
+    ],
+    favourites: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Product"
         }
     ],
     active: Boolean

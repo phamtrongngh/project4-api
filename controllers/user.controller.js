@@ -29,7 +29,6 @@ module.exports.getMyUser = async (req, res) => {
         })
     })
 }
-
 module.exports.updateUser = async (req, res) => {
     req.body = JSON.parse(req.body.user);
     User.findById(req.user._id, (err, user) => {

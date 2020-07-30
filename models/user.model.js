@@ -79,7 +79,7 @@ var userSchema = new Schema({
     newfeeds: [
         {
             type: Schema.Types.ObjectId,
-            ref: "NewFeed"
+            ref: "Newfeed"
         }
     ],
     followers: [

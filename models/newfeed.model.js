@@ -5,6 +5,7 @@ var newfeedSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User"
     },
+    place:String,
     restaurant: {
         type: Schema.Types.ObjectId,
         ref: "Restaurant"

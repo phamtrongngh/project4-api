@@ -87,7 +87,6 @@ module.exports.getOrder = async (req, res) => {
                     await resultTotal.populate("restaurant", async (err, resulttt) => {
                         return res.json(resulttt);
                     })
-
                 })
             })
         }

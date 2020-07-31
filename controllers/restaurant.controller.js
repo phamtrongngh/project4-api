@@ -86,7 +86,7 @@ module.exports.manageMyRestaurant = async (req, res) => {
     if (req.user.restaurants.find(x => x == idRestaurant)) {
         let restaurant = await Restaurant.findOne({ _id: idRestaurant })
             .populate(["menus", "orders", "newfeeds", "followers"]);
-        await restaurant.populate("orders.user","_id fullname", (err, docc) => {
+        await restaurant.populate("orders.user orders.products.product orders.restaurant", "_id fullname name image", async (err, docc) => {
             return res.json(docc);
         })
     }
@@ -95,19 +95,30 @@ module.exports.manageMyRestaurant = async (req, res) => {
     }
 }
 module.exports.updateRestaurant = async (req, res) => {
-    Restaurant.findById(req.body._id, (err, restaurant) => {
-        if (err) return res.json(err)
-        if (!restaurant) {
-            return res.json('Cant Find');
+    req.body = JSON.parse(req.body.restaurant);
+    await Restaurant.findOne({ _id: req.body._id }, async (err, restaurant) => {
+        if (err) return res.json(err);
+
+        if (restaurant.managers.find(x => x.user == req.user._id)) {
+            let avatar = req.files.find(x => x.fieldname == "avatar");
+            if (!avatar) {
+                //Nothing
+            } else {
+                restaurant.avatar = avatar.path.split("\\")[2];
+            }
+            let licenseImage = req.files.find(x => x.fieldname == "licenseImage");
+            if (licenseImage) {
+                restaurant.licenseImage = licenseImage.path.split("\\")[2];
+            }
+            restaurant.name = req.body.name;
+            restaurant.address = req.body.address;
+            restaurant.description = req.body.description;
+            await restaurant.updateOne(restaurant);
+            return res.json(restaurant);
+        }else{
+            return res.json("Bạn không có quyền")
         }
-        else {
-            restaurant.set(req.body);
-            restaurant.updateOne((error, result) => {
-                if (error) res.json(error)
-                res.json(result)
-            });
-        }
-    });
+    })
 }
 
 module.exports.deleteRestaurant = async (req, res) => {

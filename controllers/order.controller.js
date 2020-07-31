@@ -83,11 +83,11 @@ module.exports.getOrder = async (req, res) => {
         if (!order) { return res.json('Cant Find') }
         else {
             await order.populate("products.product shipper user", async (err, result) => {
-                await result.populate("products.product", async(err, resultTotal) => {
-                    await resultTotal.populate("restaurant",async(err,resulttt)=>{
+                await result.populate("products.product", async (err, resultTotal) => {
+                    await resultTotal.populate("restaurant", async (err, resulttt) => {
                         return res.json(resulttt);
                     })
-                    
+
                 })
             })
         }

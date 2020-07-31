@@ -29,10 +29,11 @@ module.exports.getShipper = async (req, res) => {
     });
 }
 module.exports.getMyOrders = async (req, res) => {
-    let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
-    await Restaurant.findById(order[0].products[0].product.restaurant, "name address avatar", async (err, doc) => {
-        order[0].restaurant = await doc;
-    })
+    var order = await Shipper.findOne({_id:req.shipper._id })
+        .populate("orders")
+        .populate("products")
+        .populate("products.product")
+        .populate("restaurant");
     return res.json(order);
 }
 module.exports.getMyCompleteOrders = async (req, res) => {

@@ -21,7 +21,10 @@ module.exports.getUser = async (req, res) => {
         }
     });
 }
-
+module.exports.search = async (req, res) => {
+    const keyword = req.params.keyword;
+    
+}
 module.exports.getMyUser = async (req, res) => {
     let select = "fullname orders newfeeds friends avatar description followers address phone";
     await User.findOne(req.user._id, select, async (err, user) => {
@@ -46,7 +49,7 @@ module.exports.updateUser = async (req, res) => {
             user.address = req.body.address;
             let avatar = req.file;
             if (!avatar) {
-                user.avatar = "user-avatar-default.png";
+                //Nothing
             } else {
                 user.avatar = avatar.path.split("\\")[2];
             }

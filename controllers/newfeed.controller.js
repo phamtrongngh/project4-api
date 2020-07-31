@@ -48,6 +48,8 @@ module.exports.createFoodNewfeed = async (req, res) => {
         let restaurant = await Restaurant.findOne({ _id: req.body.restaurant });
         restaurant.newfeeds.push(document._id);
         await restaurant.updateOne(restaurant);
+        req.user.newfeeds.push(document._id);
+        await req.user.updateOne(req.user);
         return res.json(document);
     })
 }

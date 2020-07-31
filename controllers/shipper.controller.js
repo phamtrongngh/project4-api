@@ -30,14 +30,14 @@ module.exports.getShipper = async (req, res) => {
 }
 module.exports.getMyOrders = async (req, res) => {
     let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
-    await Restaurant.findById(order[0].products[0].product.restaurant, "name address", async (err, doc) => {
+    await Restaurant.findById(order[0].products[0].product.restaurant, "name address avatar", async (err, doc) => {
         order[0].restaurant = await doc;
     })
     return res.json(order);
 }
 module.exports.getMyCompleteOrders = async (req, res) => {
     let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
-    await Restaurant.findById(order[0].products[0].product.restaurant, "name address", async (err, doc) => {
+    await Restaurant.findById(order[0].products[0].product.restaurant, "name address avatar", async (err, doc) => {
         order = order.filter(x => x.status == "completed");
         order[0].restaurant = await doc;
     })
@@ -45,7 +45,7 @@ module.exports.getMyCompleteOrders = async (req, res) => {
 }
 module.exports.getMyFailedOrders = async (req, res) => {
     let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
-    await Restaurant.findById(order[0].products[0].product.restaurant, "name address", async (err, doc) => {
+    await Restaurant.findById(order[0].products[0].product.restaurant, "name address avatar", async (err, doc) => {
         order = order.filter(x => x.status == "failed");
         order[0].restaurant = await doc;
     })

@@ -2,17 +2,21 @@ const User = require("../models/user.model");
 const Comment = require("../models/comment.model");
 const Newfeed = require("../models/newfeed.model");
 const Like = require("../models/like.model");
+
 module.exports.getUsers = async (req, res) => {
     var users = await User.find();
     res.json(users);
 }
+
 module.exports.getUser = async (req, res) => {
     await User.findById({ _id: req.params.id }, async (err, user) => {
         if (err) res.json(res);
         if (!user) { return res.json('Cant Find') }
         else {
-            await user.populate("newfeeds", (err, result) => {
-                res.json(result);
+            await user.populate("newfeeds", async (err, result) => {
+                await result.populate("newfeeds.restaurant", (err, doc) => {
+                    return res.json(doc);
+                })
             })
         }
     });

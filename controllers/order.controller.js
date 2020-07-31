@@ -8,7 +8,10 @@ module.exports.getOrders = async (req, res) => {
 }
 
 module.exports.getFindingOrders = async (req, res) => {
-    var order = await Order.find({ status: "finding" }).populate("user");
+    var order = await Order.find({ status: "finding" })
+        .populate("user")
+        .populate("restaurant")
+        .populate("products.product");
     return res.json(order);
 }
 
@@ -27,6 +30,7 @@ module.exports.createOrder = async (req, res) => {
             $in: req.body.products.map(x => x.product)
         }
     }, (err, listProduct) => {
+        order.restaurant = listProduct[0].restaurant;
         order.amount = (listProduct.reduce((preVal, curVal, index) => preVal + curVal.price * req.body.products[index].quantity
             , 0));
     })
@@ -44,8 +48,10 @@ module.exports.createOrder = async (req, res) => {
                     return res.json(value);
                 })
             } else {
-                await result.populate("user",(err,doc)=>{
-                    io.sockets.emit("newOrder", doc);
+                await result.populate("user", async (err, doc) => {
+                    await doc.populate("restaurant", (err, resultt) => {
+                        io.sockets.emit("newOrder", resultt);
+                    })
                 })
                 return res.json("/");
             }
@@ -62,8 +68,10 @@ module.exports.paying = async (req, res) => {
         }
         order.status = "finding";
         await order.updateOne(order);
-        await order.populate("user",(err,doc)=>{
-            io.sockets.emit("newOrder", doc);
+        await order.populate("user", async (err, doc) => {
+            await doc.populate("restaurant", (err, resultt) => {
+                io.sockets.emit("newOrder", resultt);
+            })
         })
         return res.json("success");
     })
@@ -75,8 +83,11 @@ module.exports.getOrder = async (req, res) => {
         if (!order) { return res.json('Cant Find') }
         else {
             await order.populate("products.product shipper user", async (err, result) => {
-                await result.populate("products.product.restaurant","name phone", (err, resultTotal) => {
-                    return res.json(resultTotal);
+                await result.populate("products.product", async(err, resultTotal) => {
+                    await resultTotal.populate("restaurant",async(err,resulttt)=>{
+                        return res.json(resulttt);
+                    })
+                    
                 })
             })
         }

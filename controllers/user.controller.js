@@ -7,11 +7,13 @@ module.exports.getUsers = async (req, res) => {
     res.json(users);
 }
 module.exports.getUser = async (req, res) => {
-    await User.findById({ _id: req.params.id }, (err, user) => {
+    await User.findById({ _id: req.params.id }, async (err, user) => {
         if (err) res.json(res);
         if (!user) { return res.json('Cant Find') }
         else {
-            res.json(user);
+            await user.populate("newfeeds", (err, result) => {
+                res.json(result);
+            })
         }
     });
 }
@@ -21,7 +23,7 @@ module.exports.getMyUser = async (req, res) => {
     await User.findOne(req.user._id, select, async (err, user) => {
         if (err) return res.json(err);
         await user.populate("orders newfeeds", async (err, result) => {
-            await result.populate("orders.products.product", async (err, doc) => {
+            await result.populate("orders.products.product newfeeds.restaurant", async (err, doc) => {
                 await doc.populate("orders.products.product.restaurant", (err, doc2) => {
                     return res.json(doc);
                 })

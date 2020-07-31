@@ -8,7 +8,7 @@ module.exports.getOrders = async (req, res) => {
 }
 
 module.exports.getFindingOrders = async (req, res) => {
-    var order = await Order.find({ status: "finding" });
+    var order = await Order.find({ status: "finding" }).populate("user");
     return res.json(order);
 }
 
@@ -44,7 +44,9 @@ module.exports.createOrder = async (req, res) => {
                     return res.json(value);
                 })
             } else {
-                io.sockets.emit("newOrder", result);
+                await result.populate("user",(err,doc)=>{
+                    io.sockets.emit("newOrder", doc);
+                })
                 return res.json("/");
             }
         });
@@ -60,7 +62,9 @@ module.exports.paying = async (req, res) => {
         }
         order.status = "finding";
         await order.updateOne(order);
-        io.sockets.emit("newOrder", order);
+        await order.populate("user",(err,doc)=>{
+            io.sockets.emit("newOrder", doc);
+        })
         return res.json("success");
     })
 }
@@ -70,7 +74,7 @@ module.exports.getOrder = async (req, res) => {
         if (err) res.json(res);
         if (!order) { return res.json('Cant Find') }
         else {
-            await order.populate("products.product shipper", async (err, result) => {
+            await order.populate("products.product shipper user", async (err, result) => {
                 await result.populate("products.product.restaurant","name phone", (err, resultTotal) => {
                     return res.json(resultTotal);
                 })

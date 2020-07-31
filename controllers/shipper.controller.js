@@ -28,18 +28,25 @@ module.exports.getShipper = async (req, res) => {
         }
     });
 }
+module.exports.getMyOrders = async (req, res) => {
+    let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
+    await Restaurant.findById(order[0].products[0].product.restaurant, "name address", async (err, doc) => {
+        order[0].restaurant = await doc;
+    })
+    return res.json(order);
+}
 module.exports.getMyCompleteOrders = async (req, res) => {
     let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
     await Restaurant.findById(order[0].products[0].product.restaurant, "name address", async (err, doc) => {
-        order = order.filter(x=>x.status=="completed");
-        order[0].restaurant =await  doc;
+        order = order.filter(x => x.status == "completed");
+        order[0].restaurant = await doc;
     })
     return res.json(order);
 }
 module.exports.getMyFailedOrders = async (req, res) => {
     let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
     await Restaurant.findById(order[0].products[0].product.restaurant, "name address", async (err, doc) => {
-        order = order.filter(x=>x.status=="failed");
+        order = order.filter(x => x.status == "failed");
         order[0].restaurant = await doc;
     })
     return res.json(order);
@@ -84,7 +91,9 @@ module.exports.acceptOrder = async (req, res) => {
             await order.updateOne(order, async (err, raw) => {
                 req.shipper.orders.push(idOrder);
                 await req.shipper.updateOne(req.shipper);
-                return res.json(order);
+                await order.populate("user", (err, doc) => {
+                    return res.json(doc);
+                });
             });
         }
     })

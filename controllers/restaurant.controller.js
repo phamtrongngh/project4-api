@@ -86,7 +86,7 @@ module.exports.manageMyRestaurant = async (req, res) => {
     if (req.user.restaurants.find(x => x == idRestaurant)) {
         let restaurant = await Restaurant.findOne({ _id: idRestaurant })
             .populate(["menus", "orders", "newfeeds", "followers"]);
-        await restaurant.populate("orders.user orders.products.product orders.restaurant", "_id fullname name image", async (err, docc) => {
+        await restaurant.populate("orders.user orders.products.product orders.restaurant", "_id fullname name image price", async (err, docc) => {
             return res.json(docc);
         })
     }
@@ -99,7 +99,7 @@ module.exports.updateRestaurant = async (req, res) => {
     await Restaurant.findOne({ _id: req.body._id }, async (err, restaurant) => {
         if (err) return res.json(err);
 
-        if (restaurant.managers.find(x => x.user == req.user._id)) {
+        if (restaurant.managers.find(x => x.user.toString() == req.user._id)) {
             let avatar = req.files.find(x => x.fieldname == "avatar");
             if (!avatar) {
                 //Nothing

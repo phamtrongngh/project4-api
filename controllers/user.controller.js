@@ -2,7 +2,7 @@ const User = require("../models/user.model");
 const Comment = require("../models/comment.model");
 const Newfeed = require("../models/newfeed.model");
 const Like = require("../models/like.model");
-
+const Product = require("../models/product.model");
 module.exports.getUsers = async (req, res) => {
     var users = await User.find();
     res.json(users);
@@ -23,7 +23,7 @@ module.exports.getUser = async (req, res) => {
 }
 module.exports.search = async (req, res) => {
     const keyword = req.params.keyword;
-    
+
 }
 module.exports.getMyUser = async (req, res) => {
     let select = "fullname orders newfeeds friends avatar description followers address phone";
@@ -131,6 +131,7 @@ module.exports.addToCart = async (req, res) => {
         quantity: req.body.quantity
     }
     var check = true;
+
     req.user.cart.forEach(x => {
         if (x.product.toString() == objCart.product) {
             x.product = objCart.product;
@@ -138,11 +139,38 @@ module.exports.addToCart = async (req, res) => {
             check = false;
         }
     })
-    if (check) req.user.cart.push(objCart);
+    if (req.user.cart.length > 0) {
+        let item0 = await Product.findOne({ _id: req.user.cart[0].product })
+        let currentItem = await Product.findOne({ _id: req.body.product })
+        if (item0.restaurant.toString() == currentItem.restaurant.toString()) {
+            if (check) req.user.cart.push(objCart);
+            await req.user.updateOne(req.user);
+            let size = req.user.cart.length;
+            return res.json(size);
+        }
+        else {
+            await req.user.updateOne(req.user);
+            return res.json(-1);
+        }
+    } else {
+        if (check) req.user.cart.push(objCart);
+        await req.user.updateOne(req.user);
+        let size = req.user.cart.length;
+        return res.json(size);
+    }
+}
+module.exports.switchCart = async (req, res) => {
+    let objCart = {
+        product: req.body.product,
+        quantity: req.body.quantity
+    }
+    if (req.body.type == "save") {
+        req.user.draft.push(req.user.cart);
+    }
+    req.user.cart = [];
+    req.user.cart.push(objCart);
     await req.user.updateOne(req.user);
-    let size = req.user.cart.length;
-    return res.json(size);
-
+    return res.json(objCart);
 }
 module.exports.removeFromCart = async (req, res) => {
     let id = req.params.id;
@@ -152,6 +180,7 @@ module.exports.removeFromCart = async (req, res) => {
     await req.user.updateOne(req.user);
     return res.json("Đã thêm món vào giỏ hàng");
 }
+
 module.exports.getCart = async (req, res) => {
     let user = await User.findOne({ _id: req.user._id })
         .select("fullname phone cart address _id");

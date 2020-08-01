@@ -40,19 +40,19 @@ module.exports.getProduct = async (req, res) => {
 }
 
 module.exports.updateProduct = async (req, res) => {
-    Product.findById(req.body._id, (err, product) => {
-        if (err) res.json(err)
-        if (!product) {
-            return res.json('Cant Find');
-        }
-        else {
-            product.set(req.body);
-            product.updateOne((error, result) => {
-                if (error) res.json(error)
-                res.json({ result })
-            });
-        }
-    });
+    req.body = JSON.parse(req.body.product);
+    let product = await Product.findOne({ _id: req.body._id });
+    let image = req.file;
+    if (!image) {
+        //Nothing
+    } else {
+        product.image = image.path.split("\\")[2];
+    }
+    product.name = req.body.name;
+    product.price = req.body.price;
+    product.saleoff = req.body.saleoff;
+    await product.updateOne(product);
+    return res.json(product);
 }
 
 module.exports.deleteProduct = async (req, res) => {

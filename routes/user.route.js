@@ -3,7 +3,8 @@ let router = express.Router();
 let userController = require("../controllers/user.controller.js");
 let upload = require("../controllers/upload.controller");
 router.get("/",userController.getUsers);
-router.get("/search/:keyword",userController.search)
+router.get("/search/:keyword",userController.search);
+router.post("/switchCart",userController.switchCart);
 router.post("/addToCart",userController.addToCart);
 router.delete("/removeFromCart/:id",userController.removeFromCart);
 router.get("/getMyUser",userController.getMyUser);

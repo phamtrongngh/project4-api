@@ -11,13 +11,15 @@ var userSchema = new Schema({
     avatar: String,
     gender: Boolean,
     draft: [
-        {
-            product: {
-                type: Schema.Types.ObjectId,
-                ref: "Product"
-            },
-            quantity: Number
-        }
+        [
+            {
+                product: {
+                    type: Schema.Types.ObjectId,
+                    ref: "Product"
+                },
+                quantity: Number
+            }
+        ]
     ],
     friends: [
         {

@@ -92,7 +92,7 @@ module.exports.acceptOrder = async (req, res) => {
             await order.updateOne(order, async (err, raw) => {
                 req.shipper.orders.push(idOrder);
                 await req.shipper.updateOne(req.shipper);
-                await order.populate("user", (err, doc) => {
+                await order.populate("user restaurant", (err, doc) => {
                     return res.json(doc);
                 });
             });

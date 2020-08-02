@@ -36,6 +36,12 @@ var restaurantSchema = new Schema({
             ref: "Order"
         }
     ],
+    coupons: [
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Coupon"
+        }
+    ],
     address: String,
     active: Boolean,
     verified: Boolean,

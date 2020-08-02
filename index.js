@@ -14,6 +14,7 @@ const shipperRoute = require("./routes/shipper.route");
 const orderRoute = require("./routes/order.route")
 const authRoute = require("./routes/auth.route");
 const messageRoute = require("./routes/message.route");
+const couponRoute = require("./routes/coupon.route");
 app.use(bodyParser.json());
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
@@ -29,11 +30,12 @@ app.use("/product", productRoute);
 app.use("/foodcategory", foodCategoryRoute);
 app.use("/shipper", shipperRoute);
 app.use("/order", orderRoute);
+app.use("/coupon",couponRoute);
 app.use("/user",userRoute);
 server.listen(9032, () => {
     console.log("Server is running...");
 })
 io.on("connection",function(socket){
-    console.log(socket.id);
+    // console.log(socket.id);
 })
 app.locals.io = io;

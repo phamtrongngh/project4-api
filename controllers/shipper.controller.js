@@ -106,7 +106,9 @@ module.exports.deliveringOrder = async (req, res) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "delivering";
             await order.updateOne(order, async (err, raw) => {
-                return res.json("Bạn đã nhận hàng.");
+                order.populate("user restaurant",(err,result)=>{
+                    return res.json(result);
+                })
             })
         } else {
             return res.json("You do not have permission!");
@@ -120,7 +122,9 @@ module.exports.completeOrder = async (req, res) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "completed";
             await order.updateOne(order, async (err, raw) => {
-                return res.json("Bạn đã hoàn thành đơn hàng.");
+                order.populate("user restaurant",(err,result)=>{
+                    return res.json(result);
+                })
             })
         } else {
             return res.json("You do not have permission!");
@@ -134,7 +138,9 @@ module.exports.cancelOrder = async (req, res) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "canceled";
             await order.updateOne(order, async (err, raw) => {
-                return res.json("Bạn đã hủy đơn hàng.");
+                order.populate("user restaurant",(err,result)=>{
+                    return res.json(result);
+                })
             });
         } else {
             return res.json("You do not have permission!");

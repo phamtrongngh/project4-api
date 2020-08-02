@@ -96,6 +96,12 @@ var userSchema = new Schema({
             ref: "User"
         }
     ],
+    coupons:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Coupon"
+        }
+    ],
     favourites: [
         {
             type: Schema.Types.ObjectId,

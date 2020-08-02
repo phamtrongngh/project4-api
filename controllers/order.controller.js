@@ -18,21 +18,20 @@ module.exports.getFindingOrders = async (req, res) => {
 module.exports.createOrder = async (req, res) => {
     let order = new Order(req.body);
     order.user = req.user._id;
+    order.amount*=1000;
+    order.fee*=1000;
     var io = req.app.locals.io;
     if (req.body.payment == "2") {
         order.status = "paying";
     } else {
         order.status = "finding";
     }
-
     await Product.find({
         "_id": {
             $in: req.body.products.map(x => x.product)
         }
     }, (err, listProduct) => {
         order.restaurant = listProduct[0].restaurant;
-        order.amount = (listProduct.reduce((preVal, curVal, index) => preVal + curVal.price * req.body.products[index].quantity
-            , 0));
     })
     await order.save(async (err, doc) => {
         if (err) return res.json({ err });

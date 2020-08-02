@@ -1,17 +1,17 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 let coupon = new Schema({
-    code: {
-        type:String,
-        unique:true
-    },
+    code: String,
     name: String,
-    description:String,
-    type:{
-        type:String,
-        enum:["fee","provisional"]
+    description: String,
+    image: String,
+    max:Number,
+    exp: Date,
+    type: {
+        type: String,
+        enum: ["fee", "provisional"]
     },
-    percent:Number,
+    percent: Number,
     restaurant: [
         {
             type: Schema.Types.ObjectId,

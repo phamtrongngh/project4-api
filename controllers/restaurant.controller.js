@@ -113,6 +113,9 @@ module.exports.updateRestaurant = async (req, res) => {
             restaurant.name = req.body.name;
             restaurant.address = req.body.address;
             restaurant.description = req.body.description;
+            restaurant.openAt = req.body.openAt;
+            restaurant.closeAt = req.body.closeAt;
+            
             await restaurant.updateOne(restaurant);
             return res.json(restaurant);
         }else{

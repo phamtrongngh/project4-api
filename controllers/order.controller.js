@@ -16,10 +16,18 @@ module.exports.getFindingOrders = async (req, res) => {
 }
 
 module.exports.createOrder = async (req, res) => {
+    if (!req.body.coupon){
+        req.body.coupon = undefined;
+    }
     let order = new Order(req.body);
     order.user = req.user._id;
-    order.amount*=1000;
-    order.fee*=1000;
+    order.amount *= 1000;
+    order.fee *= 1000;
+    if (order.discount) {
+        order.discount *= 1000;
+    }else{
+        order.discount= undefined;
+    }
     var io = req.app.locals.io;
     if (req.body.payment == "2") {
         order.status = "paying";
@@ -34,7 +42,10 @@ module.exports.createOrder = async (req, res) => {
         order.restaurant = listProduct[0].restaurant;
     })
     await order.save(async (err, doc) => {
-        if (err) return res.json({ err });
+        if (err) {
+            console.log(err);
+            return res.json({ err })
+        };
         await doc.populate("products.product", async (err, result) => {
             req.user.orders.push(result._id);
             await req.user.updateOne(req.user);

@@ -5,14 +5,12 @@ let coupon = new Schema({
     name: String,
     description: String,
     image: String,
-    max:Number,
+    discount:Number,
+    max: Number,
+    min: Number,
     exp: Date,
-    type: {
-        type: String,
-        enum: ["fee", "provisional"]
-    },
     percent: Number,
-    restaurant: [
+    restaurants: [
         {
             type: Schema.Types.ObjectId,
             ref: "Restaurant"

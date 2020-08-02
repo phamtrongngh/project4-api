@@ -1,16 +1,18 @@
 const Coupon = require("../models/coupon.model");
 const Restaurant = require("../models/restaurant.model");
 module.exports.getAll = async (req, res) => {
-    Coupon.find((err, result) => {
-        return res.json(result);
-    })
+    let restaurants = await Coupon.find().populate("restaurants");
+    return res.json(restaurants)
 }
 module.exports.get = async (req, res) => {
     let code = req.params.code;
-    Coupon.findOne({ code: code }, (err, coupon) => {
-        return res.json(coupon);
+    Coupon.findOne({ code: code }, async(err, coupon) => {
+        coupon.populate("restaurants","_id name avatar",(err,result)=>{
+            return res.json(result);
+        })
     })
 }
+
 module.exports.post = async (req, res) => {
     let coupon = new Coupon(req.body);
     coupon.save((err, doc) => {

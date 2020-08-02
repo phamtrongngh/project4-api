@@ -70,10 +70,9 @@ module.exports.sendMessage = async (req, res) => {
                 }
                 await receiver.updateOne(receiver);
             });
-            // io.on("connection",function(socket){
-            //     console.log(socket.id);
-            //     socket.em
-            // })
+            io.on("connection",function(socket){
+                
+            })
             io.sockets.emit("sendMessage", doc);
         })
     })

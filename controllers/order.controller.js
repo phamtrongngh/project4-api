@@ -9,7 +9,7 @@ module.exports.getOrders = async (req, res) => {
 
 module.exports.getFindingOrders = async (req, res) => {
     var order = await Order.find({ status: "finding" })
-        .populate("user")
+        .populate("user coupon")
         .populate("restaurant")
         .populate("products.product");
     return res.json(order);
@@ -63,7 +63,7 @@ module.exports.createOrder = async (req, res) => {
                         io.sockets.emit("newOrder", resultt);
                     })
                 })
-                return res.json("/");
+                return res.json("/status-order/"+doc._id);
             }
         });
 
@@ -94,7 +94,7 @@ module.exports.getOrder = async (req, res) => {
         else {
             await order.populate("products.product shipper user", async (err, result) => {
                 await result.populate("products.product", async (err, resultTotal) => {
-                    await resultTotal.populate("restaurant", async (err, resulttt) => {
+                    await resultTotal.populate("restaurant coupon", async (err, resulttt) => {
                         return res.json(resulttt);
                     })
                 })

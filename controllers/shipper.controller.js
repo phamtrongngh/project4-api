@@ -29,28 +29,24 @@ module.exports.getShipper = async (req, res) => {
     });
 }
 module.exports.getMyOrders = async (req, res) => {
-    var order = await Shipper.findOne({_id:req.shipper._id })
+    let orders = await Order.find({ shipper: req.shipper._id }).populate("coupon user restaurant").populate("products.product");
+    return res.json(orders);
+}
+module.exports.getMyCompleteOrders = async (req, res) => {
+    var order = await Shipper.findOne({ _id: req.shipper._id, status: "completed" })
         .populate("orders")
         .populate("products")
         .populate("products.product")
-        .populate("restaurant");
-    return res.json(order);
-}
-module.exports.getMyCompleteOrders = async (req, res) => {
-    let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
-    await Restaurant.findById(order[0].products[0].product.restaurant, "name address avatar", async (err, doc) => {
-        order = order.filter(x => x.status == "completed");
-        order[0].restaurant = await doc;
-    })
+        .populate("restaurant coupon user");
     return res.json(order);
 }
 module.exports.getMyFailedOrders = async (req, res) => {
-    let order = await Order.find({ shipper: req.shipper._id }).populate("user", "fullname phone avatar").populate("products.product");
-    await Restaurant.findById(order[0].products[0].product.restaurant, "name address avatar", async (err, doc) => {
-        order = order.filter(x => x.status == "failed");
-        order[0].restaurant = await doc;
-    })
-    return res.json(order);
+    var order = await Shipper.findOne({ _id: req.shipper._id, status: "canceled" })
+        .populate("orders")
+        .populate("products")
+        .populate("products.product")
+        .populate("restaurant coupon user");
+    return res.json(order.orders);
 }
 module.exports.getMyShipper = async (req, res) => {
     await Shipper.findOne(req.shipper._id, (err, shipper) => {
@@ -83,7 +79,6 @@ module.exports.deleteShipper = async (req, res) => {
 module.exports.acceptOrder = async (req, res) => {
     let idOrder = req.params.id;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
-
         if (order.shipper) {
             return res.json({ message: "Đã có shipper khác nhận đơn hàng này" });
         } else {
@@ -92,7 +87,11 @@ module.exports.acceptOrder = async (req, res) => {
             await order.updateOne(order, async (err, raw) => {
                 req.shipper.orders.push(idOrder);
                 await req.shipper.updateOne(req.shipper);
-                await order.populate("user restaurant", (err, doc) => {
+                var io = req.app.locals.io;
+                io.on("connection",(socket)=>{
+                    console.log("Nghia");
+                })
+                await order.populate("user restaurant coupon", (err, doc) => {
                     return res.json(doc);
                 });
             });
@@ -106,7 +105,7 @@ module.exports.deliveringOrder = async (req, res) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "delivering";
             await order.updateOne(order, async (err, raw) => {
-                order.populate("user restaurant",(err,result)=>{
+                order.populate("user restaurant coupon", (err, result) => {
                     return res.json(result);
                 })
             })
@@ -122,7 +121,7 @@ module.exports.completeOrder = async (req, res) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "completed";
             await order.updateOne(order, async (err, raw) => {
-                order.populate("user restaurant",(err,result)=>{
+                order.populate("user restaurant coupon", (err, result) => {
                     return res.json(result);
                 })
             })
@@ -138,7 +137,7 @@ module.exports.cancelOrder = async (req, res) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "canceled";
             await order.updateOne(order, async (err, raw) => {
-                order.populate("user restaurant",(err,result)=>{
+                order.populate("user restaurant coupon", (err, result) => {
                     return res.json(result);
                 })
             });

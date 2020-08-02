@@ -79,6 +79,18 @@ module.exports.requestFriend = async (req, res) => {
     })
     res.json("Successfully");
 }
+module.exports.getFriendRequests = async (req, res) => {
+    let users = req.user.friends.map(x => {
+        if (x.status == "requested") return x.user;
+    });
+    User.find({
+        _id: {
+            $in: users
+        }
+    }, (err, result) => {
+        return res.json(result);
+    })
+}
 module.exports.cancelRequest = async (req, res) => {
     let idRequest = req.params.id;
     await User.findOne(req.user._id, async (err, doc) => {

@@ -14,17 +14,18 @@ let order = new Schema({
             quantity: Number
         }
     ],
-    restaurant:{
-        type:Schema.Types.ObjectId,
-        ref:"Restaurant"
+    restaurant: {
+        type: Schema.Types.ObjectId,
+        ref: "Restaurant"
     },
-    note:String,
+    note: String,
     address: String,
-    coupon:{
-        type:Schema.Types.ObjectId,
-        ref:"Coupon"
+    discount: Number,
+    coupon: {
+        type: Schema.Types.ObjectId,
+        ref: "Coupon"
     },
-    fee:Number,
+    fee: Number,
     amount: Number, //Tổng số tiền
     shipper: {
         type: Schema.Types.ObjectId,
@@ -32,7 +33,7 @@ let order = new Schema({
     },
     status: {
         type: String,
-        enum: ["paying","finding","receiving, delivering, completed, canceled"]
+        enum: ["paying", "finding", "receiving, delivering, completed, canceled"]
     }
 }, { timestamps: true });
 module.exports = mongoose.model("Order", order, "Order");

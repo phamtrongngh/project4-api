@@ -38,8 +38,8 @@ var restaurantSchema = new Schema({
     ],
     coupons: [
         {
-            type:Schema.Types.ObjectId,
-            ref:"Coupon"
+            type: Schema.Types.ObjectId,
+            ref: "Coupon"
         }
     ],
     address: String,
@@ -47,12 +47,13 @@ var restaurantSchema = new Schema({
     verified: Boolean,
     avatar: String,
     licenseImage: String,
+    openAt: String,
+    closeAt: String,
     followers: [
         {
             type: Schema.Types.ObjectId,
             ref: "User"
         }
     ]
-
 }, { timestamps: true })
 module.exports = mongoose.model("Restaurant", restaurantSchema, "Restaurant");

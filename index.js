@@ -19,23 +19,24 @@ app.use(bodyParser.json());
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 
-
+io.on("connection", function (socket) {
+    socket.on("join", (data) => {
+        socket.join(data);
+    })
+})
 app.use("/authorization", authRoute);
-app.use("/public/",express.static("public"));
+app.use("/public/", express.static("public"));
 app.use(authController.isAuthenticated);
-app.use("/message",messageRoute);
+app.use("/message", messageRoute);
 app.use("/newfeed", newfeedRoute);
 app.use("/restaurant", restaurantRoute);
 app.use("/product", productRoute);
 app.use("/foodcategory", foodCategoryRoute);
 app.use("/shipper", shipperRoute);
 app.use("/order", orderRoute);
-app.use("/coupon",couponRoute);
-app.use("/user",userRoute);
+app.use("/coupon", couponRoute);
+app.use("/user", userRoute);
 server.listen(9032, () => {
     console.log("Server is running...");
-})
-io.on("connection",function(socket){
-    // console.log(socket.id);
 })
 app.locals.io = io;

@@ -27,9 +27,7 @@ module.exports.delete = async (req, res) => {
 }
 
 module.exports.check = async (req, res) => {
-    const userId = req.user._id;
     const restaurantId = req.body.restaurant;
-    const amount = req.body.amount;
     const code = req.body.code;
     await Coupon.findOne({ code: code.toUpperCase() }, async (err, coupon) => {
         if (coupon) {

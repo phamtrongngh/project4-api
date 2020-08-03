@@ -56,7 +56,10 @@ module.exports.sendMessage = async (req, res) => {
                         messages: [result._id]
                     })
                 }
+                
                 await sender.updateOne(sender);
+                
+                io.sockets.in(sender._id).emit("sendMessage", doc);
             })
             await User.findOne({ _id: result.receiver }, async (err, receiver) => {
                 let check = receiver.conversations.find(x => x.user == result.sender.toString());
@@ -69,12 +72,10 @@ module.exports.sendMessage = async (req, res) => {
                     })
                 }
                 await receiver.updateOne(receiver);
+                io.sockets.in(receiver._id).emit("sendMessage", doc);
             });
-            // io.on("connection",function(socket){
-            //     console.log(socket.id);
-            //     socket.em
-            // })
-            io.sockets.emit("sendMessage", doc);
+            
+            
         })
     })
     return res.json("");

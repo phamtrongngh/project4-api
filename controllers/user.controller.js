@@ -3,6 +3,7 @@ const Comment = require("../models/comment.model");
 const Newfeed = require("../models/newfeed.model");
 const Like = require("../models/like.model");
 const Product = require("../models/product.model");
+
 module.exports.getUsers = async (req, res) => {
     var users = await User.find();
     res.json(users);
@@ -75,9 +76,19 @@ module.exports.requestFriend = async (req, res) => {
             user: req.user._id,
             status: "requested"
         })
-        await doc.updateOne(doc);
+        await doc.updateOne(doc); 
+        var io = req.app.locals.io;
+        io.sockets.in(doc._id).emit("friendRequest", req.user);
     })
-    res.json("Successfully");
+    return res.json("Successfully");
+}
+module.exports.getFriendRequests = async (req, res) => {
+    User.findOne({ _id: req.user._id }, async (err, resul) => {
+        await resul.populate("friends.user", (err, docc) => {
+
+            return res.json(docc.friends);
+        });
+    })
 }
 module.exports.cancelRequest = async (req, res) => {
     let idRequest = req.params.id;

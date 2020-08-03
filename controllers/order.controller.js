@@ -59,7 +59,7 @@ module.exports.createOrder = async (req, res) => {
                 })
             } else {
                 await result.populate("user", async (err, doc) => {
-                    await doc.populate("restaurant", (err, resultt) => {
+                    await doc.populate("restaurant coupon", (err, resultt) => {
                         io.sockets.emit("newOrder", resultt);
                     })
                 })

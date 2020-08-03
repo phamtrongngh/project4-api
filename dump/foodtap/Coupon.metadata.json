@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"foodtap.Coupon"},{"v":{"$numberInt":"2"},"unique":true,"key":{"code":{"$numberInt":"1"}},"name":"code_1","ns":"foodtap.Coupon","background":true}],"uuid":"7a99be1eb55a4ca5afdb21e1177a2525"}

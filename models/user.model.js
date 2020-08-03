@@ -21,6 +21,12 @@ var userSchema = new Schema({
             }
         ]
     ],
+    notifications:[
+        {
+            image: String,
+            link:String
+        }
+    ],
     friends: [
         {
             user: {

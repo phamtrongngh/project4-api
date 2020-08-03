@@ -24,7 +24,6 @@ module.exports.getUser = async (req, res) => {
 }
 module.exports.search = async (req, res) => {
     const keyword = req.params.keyword;
-
 }
 module.exports.getMyUser = async (req, res) => {
     let select = "fullname orders newfeeds friends avatar description followers address phone";
@@ -38,6 +37,9 @@ module.exports.getMyUser = async (req, res) => {
             })
         })
     })
+}
+module.exports.getNotifications = async (req, res) => {
+    
 }
 module.exports.updateUser = async (req, res) => {
     req.body = JSON.parse(req.body.user);
@@ -76,7 +78,7 @@ module.exports.requestFriend = async (req, res) => {
             user: req.user._id,
             status: "requested"
         })
-        await doc.updateOne(doc); 
+        await doc.updateOne(doc);
         var io = req.app.locals.io;
         io.sockets.in(doc._id).emit("friendRequest", req.user);
     })

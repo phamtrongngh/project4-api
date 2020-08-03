@@ -86,7 +86,7 @@ module.exports.manageMyRestaurant = async (req, res) => {
     if (req.user.restaurants.find(x => x == idRestaurant)) {
         let restaurant = await Restaurant.findOne({ _id: idRestaurant })
             .populate(["menus", "orders", "newfeeds", "followers"]);
-        await restaurant.populate("orders.user orders.products.product orders.restaurant", "_id fullname name image price", async (err, docc) => {
+        await restaurant.populate("orders.user orders.shipper orders.products.product orders.restaurant", "_id fullname name image price", async (err, docc) => {
             return res.json(docc);
         })
     }

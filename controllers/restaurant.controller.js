@@ -2,8 +2,8 @@ const Restaurant = require('../models/restaurant.model');
 const User = require("../models/user.model");
 
 module.exports.getRestaurants = async (req, res) => {
-    var restaurant = await Restaurant.find();
-    res.json(restaurant);
+    var restaurant = await Restaurant.find().populate("managers.user");
+    return res.json(restaurant);
 }
 
 module.exports.createRestaurant = async (req, res) => {

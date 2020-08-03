@@ -77,7 +77,6 @@ module.exports.deleteShipper = async (req, res) => {
 }
 
 module.exports.acceptOrder = async (req, res) => {
-    console.log(req.body);
     let idOrder = req.params.id;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
         if (order.shipper) {
@@ -89,7 +88,6 @@ module.exports.acceptOrder = async (req, res) => {
                 req.shipper.orders.push(idOrder);
                 await req.shipper.updateOne(req.shipper);
                 var io = req.app.locals.io;
-                console.log(req.body);
                 io.sockets.in(order.user).emit("acceptOrder", { latLng: [req.body.latitude, req.body.longitude], shipper: req.shipper })
                 await order.populate("user restaurant coupon", (err, doc) => {
                     return res.json(doc);

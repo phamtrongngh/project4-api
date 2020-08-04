@@ -21,10 +21,27 @@ var userSchema = new Schema({
             }
         ]
     ],
-    notifications:[
+    notifications: [
         {
-            image: String,
-            link:String
+            fromUser: {
+                type: Schema.Types.ObjectId,
+                ref: "User"
+            },
+            fromRestaurant: {
+                type: Schema.Types.ObjectId,
+                ref: "Restaurant"
+            },
+            toRestaurant: {
+                type: Schema.Types.ObjectId,
+                ref: "Restaurant"
+            },
+            toNewfeed: {
+                type: Schema.Types.ObjectId,
+                ref: "Newfeed"
+            },
+            date:Date,
+            content: String,
+            link: String,
         }
     ],
     friends: [
@@ -102,10 +119,10 @@ var userSchema = new Schema({
             ref: "User"
         }
     ],
-    coupons:[
+    coupons: [
         {
-            type:Schema.Types.ObjectId,
-            ref:"Coupon"
+            type: Schema.Types.ObjectId,
+            ref: "Coupon"
         }
     ],
     favourites: [

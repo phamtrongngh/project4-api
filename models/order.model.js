@@ -21,6 +21,7 @@ let order = new Schema({
     note: String,
     address: String,
     discount: Number,
+
     coupon: {
         type: Schema.Types.ObjectId,
         ref: "Coupon"
@@ -34,6 +35,10 @@ let order = new Schema({
     status: {
         type: String,
         enum: ["paying", "finding", "receiving, delivering, completed, canceled"]
+    },
+    canceledBy:{
+        type:String,
+        enum:["user","shipper"]
     }
 }, { timestamps: true });
 module.exports = mongoose.model("Order", order, "Order");

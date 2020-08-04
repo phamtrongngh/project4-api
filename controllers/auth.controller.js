@@ -3,10 +3,10 @@ const User = require("../models/user.model");
 const Shipper = require("../models/shipper.model");
 const jwt = require("jsonwebtoken");
 
-module.exports.register = async (req, res, next) => {
+module.exports.register = async(req, res, next) => {
     User.findOne({ phone: req.body.phone }, (err, user) => {
         if (user == null) {
-            bcrypt.hash(req.body.password, 10, function (err, hash) {
+            bcrypt.hash(req.body.password, 10, function(err, hash) {
                 if (err) return next(err);
                 const user = new User(req.body);
                 user.password = hash;
@@ -24,7 +24,7 @@ module.exports.register = async (req, res, next) => {
     })
 }
 
-module.exports.login = async (req, res) => {
+module.exports.login = async(req, res) => {
     User.findOne({ phone: req.body.phone }, (err, user) => {
         if (err) res.json(err);
         if (user != null) {
@@ -35,21 +35,19 @@ module.exports.login = async (req, res) => {
                 //     io.sockets.emit("connection");
                 // })
                 res.json({ access_token: token });
-            }
-            else {
+            } else {
                 res.json({ message: "Wrong password" })
             }
-        }
-        else {
+        } else {
             res.json({ message: "Wrong username" });
         }
     })
 }
-module.exports.logout = async (req, res) => {
+module.exports.logout = async(req, res) => {
     res.json("You have signed out!!!");
 }
 
-module.exports.loginShipper = async (req, res) => {
+module.exports.loginShipper = async(req, res) => {
     Shipper.findOne({ phone: req.body.phone }, (err, shipper) => {
         if (err) res.json(err);
         if (shipper != null) {
@@ -60,20 +58,18 @@ module.exports.loginShipper = async (req, res) => {
                 //     io.sockets.emit("messageServer");
                 // })
                 res.json({ access_token: token });
-            }
-            else {
+            } else {
                 res.json({ message: "Wrong password" })
             }
-        }
-        else {
+        } else {
             res.json({ message: "Wrong username" });
         }
     })
 }
-module.exports.registerShipper = async (req, res) => {
+module.exports.registerShipper = async(req, res) => {
     Shipper.findOne({ phone: req.body.phone }, (err, shipper) => {
         if (shipper == null) {
-            bcrypt.hash(req.body.password, 10, function (err, hash) {
+            bcrypt.hash(req.body.password, 10, function(err, hash) {
                 if (err) return res.json(err);
                 const shipper = new Shipper(req.body);
                 shipper.password = hash;
@@ -92,10 +88,10 @@ module.exports.registerShipper = async (req, res) => {
     })
 }
 
-module.exports.logoutShipper = async (req, res) => {
+module.exports.logoutShipper = async(req, res) => {
     Shipper.findOne({ phone: req.body.phone }, (err, shipper) => {
         if (shipper == null) {
-            bcrypt.hash(req.body.password, 10, function (err, hash) {
+            bcrypt.hash(req.body.password, 10, function(err, hash) {
                 if (err) return res.json(err);
                 const shipper = new Shipper(req.body);
                 shipper.password = hash;
@@ -128,8 +124,7 @@ module.exports.isAuthenticated = (req, res, next) => {
                             res.status(401).json({ message: "Unauthorized user!" });
                         }
                     })
-                }
-                else {
+                } else {
                     Shipper.findOne({ "_id": payload._id }, (err, shipper) => {
                         if (shipper) {
                             req.shipper = shipper;

@@ -27,15 +27,12 @@ module.exports.getConversation = async (req, res) => {
     }
 }
 
-module.exports.getListFriends = async (req, res) => {
-    User.findOne(req.user._id, (err, doc) => {
-        if (err) return res.json(err);
-        doc.populate("friends.user", ["fullname", "avatar", "_id"], (err, docPopulated) => {
-            return res.json(docPopulated.friends
-                .filter(x => x.status == "accepted")
-                .map(x => x.user));
-        })
-    });
+module.exports.getAllChatter = async (req, res) => {
+    User.findOne({_id:req.user._id},(err,result)=>{
+        result.populate("conversations.user",(err,docss)=>{
+            return res.json(docss.conversations);
+        });
+    })
 }
 
 module.exports.sendMessage = async (req, res) => {

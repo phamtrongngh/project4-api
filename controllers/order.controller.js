@@ -2,6 +2,7 @@ const Order = require('../models/order.model');
 const Product = require("../models/product.model");
 const Momo = require("../momo.util/momo");
 const Restaurant = require("../models/restaurant.model");
+const User = require("../models/user.model");
 module.exports.getOrders = async (req, res) => {
     var order = await Order.find();
     return res.json(order);
@@ -16,7 +17,7 @@ module.exports.getFindingOrders = async (req, res) => {
 }
 
 module.exports.createOrder = async (req, res) => {
-    if (!req.body.coupon){
+    if (!req.body.coupon) {
         req.body.coupon = undefined;
     }
     let order = new Order(req.body);
@@ -25,8 +26,8 @@ module.exports.createOrder = async (req, res) => {
     order.fee *= 1000;
     if (order.discount) {
         order.discount *= 1000;
-    }else{
-        order.discount= undefined;
+    } else {
+        order.discount = undefined;
     }
     var io = req.app.locals.io;
     if (req.body.payment == "2") {
@@ -61,14 +62,48 @@ module.exports.createOrder = async (req, res) => {
                 await result.populate("user", async (err, doc) => {
                     await doc.populate("restaurant coupon", (err, resultt) => {
                         io.sockets.emit("newOrder", resultt);
+                        let noti = {
+                            fromUser: resultt.user._id,
+                            toRestaurant: resultt.restaurant._id,
+                            content: "Nhà hàng bạn vừa có đơn hàng mới!",
+                            date: new Date(Date.now()),
+                            link: "/manageMyRestaurant/" + resultt.restaurant._id
+                        };
+                        resultt.restaurant.managers.forEach(async (manager) => {
+                            io.sockets.in(manager.user).emit("newOrderRestaurant", resultt);
+                            await User.findOne({ _id: manager.user }, async (err, user) => {
+                                user.notifications.push(noti);
+                                await user.updateOne(user)
+                            })
+                        });
                     })
                 })
-                return res.json("/status-order/"+doc._id);
+                return res.json("/status-order/" + doc._id);
             }
         });
 
     });
 }
+
+module.exports.cancelOrder = async (req, res) => {
+    let idOrder = req.params.id;
+    var io = req.app.locals.io;
+    await Order.findOne({ _id: idOrder }, async (err, order) => {
+        if (order.user.toString() == req.user._id) {
+            order.status = "canceled";
+            order.canceledBy = "user";
+            await order.updateOne(order, async (err, raw) => {
+                order.populate("user restaurant coupon", (err, result) => {
+                    io.sockets.in(order.shipper._id).emit("cancelOrder",result);
+                    return res.json(result);
+                })
+            });
+        } else {
+            return res.json("You do not have permission!");
+        };
+    })
+}
+
 module.exports.paying = async (req, res) => {
     let orderId = req.params.id;
     var io = req.app.locals.io;

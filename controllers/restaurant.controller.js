@@ -46,7 +46,7 @@ module.exports.getRestaurant = async (req, res) => {
         if (err) return res.json(err);
         if (!restaurant) { return res.json('Cant Find') }
         else {
-            await restaurant.populate("newfeeds", (err, result) => {
+            await restaurant.populate("newfeeds menus", (err, result) => {
                 return res.json(result);
             })
         }

@@ -3,6 +3,7 @@ const Comment = require("../models/comment.model");
 const Newfeed = require("../models/newfeed.model");
 const Like = require("../models/like.model");
 const Product = require("../models/product.model");
+const { array } = require("./upload.controller");
 
 module.exports.getUsers = async (req, res) => {
     var users = await User.find();
@@ -39,7 +40,9 @@ module.exports.getMyUser = async (req, res) => {
     })
 }
 module.exports.getNotifications = async (req, res) => {
-    
+    await req.user.populate("notifications.fromUser notifications.toRestaurant", (err, result) => {
+        return res.json(result.notifications);
+    })
 }
 module.exports.updateUser = async (req, res) => {
     req.body = JSON.parse(req.body.user);

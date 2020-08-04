@@ -5,6 +5,7 @@ let shipperController = require("../controllers/shipper.controller");
 router.get("/",shipperController.getShippers);
 router.get("/getMyShipper", shipperController.getMyShipper);
 router.get("/getMyOrders", shipperController.getMyOrders);
+router.post("/sendMyLocation", shipperController.sendMyLocation);
 router.get("/getMyCompletedOrders", shipperController.getMyCompleteOrders)
 router.get("/getMyFailedOrders", shipperController.getMyFailedOrders)
 router.get("/:id", shipperController.getShipper);

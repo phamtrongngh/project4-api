@@ -3,5 +3,5 @@ const router = express.Router();
 const messageController = require("../controllers/message.controller");
 router.get("/getConversation/:id", messageController.getConversation);
 router.post("/sendMessage", messageController.sendMessage);
-router.get("/getListFriends", messageController.getListFriends);
+router.get("/getAllChatter", messageController.getAllChatter);
 module.exports = router;

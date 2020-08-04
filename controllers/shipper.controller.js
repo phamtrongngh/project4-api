@@ -98,7 +98,6 @@ module.exports.acceptOrder = async (req, res) => {
 }
 
 module.exports.deliveringOrder = async (req, res) => {
-    console.log(req.body)
     let idOrder = req.params.id;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
         if (order.shipper.toString() == req.shipper._id) {
@@ -113,7 +112,10 @@ module.exports.deliveringOrder = async (req, res) => {
         };
     })
 }
-
+module.exports.sendMyLocation = async (req, res) => {
+    console.log(req.body);
+    return res.json("cac ne quang")
+}
 module.exports.completeOrder = async (req, res) => {
     let idOrder = req.params.id;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
@@ -135,6 +137,7 @@ module.exports.cancelOrder = async (req, res) => {
     await Order.findOne({ _id: idOrder }, async (err, order) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "canceled";
+            order.canceledBy = "shipper";
             await order.updateOne(order, async (err, raw) => {
                 order.populate("user restaurant coupon", (err, result) => {
                     return res.json(result);

@@ -9,6 +9,10 @@ let shipper = new Scheme(
         idCard: String,
         gender: Boolean,
         avatar: String,
+        status:{
+            type:String,
+            enum:["free","working"]
+        },
         rating: [
             {
                 user: {

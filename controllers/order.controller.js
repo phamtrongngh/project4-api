@@ -3,6 +3,7 @@ const Product = require("../models/product.model");
 const Momo = require("../momo.util/momo");
 const Restaurant = require("../models/restaurant.model");
 const User = require("../models/user.model");
+const Shipper = require("../models/shipper.model");
 module.exports.getOrders = async (req, res) => {
     var order = await Order.find();
     return res.json(order);
@@ -93,8 +94,12 @@ module.exports.cancelOrder = async (req, res) => {
             order.status = "canceled";
             order.canceledBy = "user";
             await order.updateOne(order, async (err, raw) => {
-                order.populate("user restaurant coupon", (err, result) => {
-                    io.sockets.in(order.shipper._id).emit("cancelOrder",result);
+                await order.populate("user restaurant coupon", async (err, result) => {
+                    await Shipper.findOne({ _id: order.shipper }, async (err, shi) => {
+                        shi.currentOrder = null;
+                        await shi.updateOne(shi);
+                    })
+                    io.sockets.in(order.shipper).emit("cancelOrder", result);
                     return res.json(result);
                 })
             });

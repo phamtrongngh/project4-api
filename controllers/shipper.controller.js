@@ -78,32 +78,39 @@ module.exports.deleteShipper = async (req, res) => {
 
 module.exports.acceptOrder = async (req, res) => {
     let idOrder = req.params.id;
-    await Order.findOne({ _id: idOrder }, async (err, order) => {
-        if (order.shipper) {
-            return res.json({ message: "Đã có shipper khác nhận đơn hàng này" });
-        } else {
-            order.shipper = req.shipper._id;
-            order.status = "receiving";
-            await order.updateOne(order, async (err, raw) => {
-                req.shipper.orders.push(idOrder);
-                await req.shipper.updateOne(req.shipper);
-                var io = req.app.locals.io;
-                io.sockets.in(order.user).emit("acceptOrder", { latLng: [req.body.latitude, req.body.longitude], shipper: req.shipper })
-                await order.populate("user restaurant coupon", (err, doc) => {
-                    return res.json(doc);
+    if (!req.shipper.currentOrder) {
+        await Order.findOne({ _id: idOrder }, async (err, order) => {
+            if (order.shipper) {
+                return res.json({ message: "Đã có shipper khác nhận đơn hàng này" });
+            } else {
+                order.shipper = req.shipper._id;
+                order.status = "receiving";
+                await order.updateOne(order, async (err, raw) => {
+                    req.shipper.orders.push(idOrder);
+                    req.shipper.currentOrder = idOrder;
+                    await req.shipper.updateOne(req.shipper);
+                    var io = req.app.locals.io;
+                    io.sockets.in(order.user).emit("acceptOrder", { latLng: [req.body.latitude, req.body.longitude], shipper: req.shipper })
+                    await order.populate("user restaurant coupon", (err, doc) => {
+                        return res.json(doc);
+                    });
                 });
-            });
-        }
-    })
+            }
+        })
+    } else {
+        return res.json("Bạn phải hoàn thành đơn hiện tại!");
+    }
 }
 
 module.exports.deliveringOrder = async (req, res) => {
+    var io = req.app.locals.io;
     let idOrder = req.params.id;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "delivering";
             await order.updateOne(order, async (err, raw) => {
                 order.populate("user restaurant coupon", (err, result) => {
+                    io.sockets.in(result.user._id).emit("deliveringOrder", result);
                     return res.json(result);
                 })
             })
@@ -113,19 +120,28 @@ module.exports.deliveringOrder = async (req, res) => {
     })
 }
 module.exports.sendMyLocation = async (req, res) => {
-    console.log(req.body);
-    return res.json("cac ne quang")
+    let latLng = req.body;
+    var io = req.app.locals.io;
+    await req.shipper.populate("currentOrder", (err, result) => {
+        io.sockets.in(result.currentOrder.user).emit("shipperLocation",latLng);
+    })
+    return "Successfully";
 }
 module.exports.completeOrder = async (req, res) => {
     let idOrder = req.params.id;
+    var io = req.app.locals.io;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "completed";
             await order.updateOne(order, async (err, raw) => {
+                req.shipper.currentOrder = null;
+                await req.shipper.updateOne(req.shipper);
                 order.populate("user restaurant coupon", (err, result) => {
+                    io.sockets.in(result.user._id).emit("completedOrder", result);
                     return res.json(result);
                 })
-            })
+            });
+
         } else {
             return res.json("You do not have permission!");
         };
@@ -134,12 +150,16 @@ module.exports.completeOrder = async (req, res) => {
 
 module.exports.cancelOrder = async (req, res) => {
     let idOrder = req.params.id;
+    var io = req.app.locals.io;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "canceled";
             order.canceledBy = "shipper";
             await order.updateOne(order, async (err, raw) => {
+                req.shipper.currentOrder = null;
+                await req.shipper.updateOne(req.shipper);
                 order.populate("user restaurant coupon", (err, result) => {
+                    io.sockets.in(result.user._id).emit("cancelOrder", result);
                     return res.json(result);
                 })
             });

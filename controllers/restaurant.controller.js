@@ -1,6 +1,8 @@
 const Restaurant = require('../models/restaurant.model');
 const User = require("../models/user.model");
-
+const Momo = require("../momo.util/momo.restaurant");
+const Pay = require("../models/pay.model");
+const { json } = require('body-parser');
 module.exports.getRestaurants = async (req, res) => {
     var restaurant = await Restaurant.find().populate("managers.user");
     return res.json(restaurant);
@@ -26,21 +28,45 @@ module.exports.createRestaurant = async (req, res) => {
             if (licenseImage) {
                 restaurant.licenseImage = licenseImage.path.split("\\")[2];
             }
-            restaurant.active = true;
+            restaurant.active = false;
             restaurant.save((err, result) => {
                 if (err) return res.json({ err });
                 User.findOne({ _id: result.managers[0].user.toString() }, async (err, user) => {
                     user.restaurants.push(result._id.toString());
                     await user.updateOne(user);
                 })
-                return res.json(result);
+                let pay = new Pay({
+                    user: req.user._id,
+                    restaurant: result._id,
+                    amount: 200000,
+                    type: "creating_restaurant",
+                    status: false
+                })
+                pay.save((err, doc) => {
+                    Momo(doc).then(value => {
+                        return res.json(value);
+                    })
+                })
+
             })
         } else {
             return res.json("Tên cửa hàng đã được sử dụng, vui lòng chọn tên khác!");
         }
     })
 }
-
+module.exports.paying = async (req, res) => {
+    let orderId = req.params.id;
+    await Pay.findOne({ _id: orderId }, async (err, pay) => {
+        if (err) {
+            return res.json("failed");
+        }
+        Restaurant.findOne({ _id: pay.restaurant }, async (err, result) => {
+            result.active = true;
+            await result.updateOne(result);
+        })
+    })
+    return res.json("");
+}
 module.exports.getRestaurant = async (req, res) => {
     await Restaurant.findById({ _id: req.params.id }, async (err, restaurant) => {
         if (err) return res.json(err);
@@ -115,10 +141,10 @@ module.exports.updateRestaurant = async (req, res) => {
             restaurant.description = req.body.description;
             restaurant.openAt = req.body.openAt;
             restaurant.closeAt = req.body.closeAt;
-            
+
             await restaurant.updateOne(restaurant);
             return res.json(restaurant);
-        }else{
+        } else {
             return res.json("Bạn không có quyền")
         }
     })

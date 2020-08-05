@@ -29,24 +29,24 @@ module.exports.getShipper = async (req, res) => {
     });
 }
 module.exports.getMyOrders = async (req, res) => {
-    let orders = await Order.find({ shipper: req.shipper._id }).populate("coupon user restaurant").populate("products.product");
+    let orders = await Order.find({ shipper: req.shipper._id })
+        .populate("coupon user restaurant")
+        .populate("products.product");
     return res.json(orders);
 }
 module.exports.getMyCompleteOrders = async (req, res) => {
-    var order = await Shipper.findOne({ _id: req.shipper._id, status: "completed" })
-        .populate("orders")
-        .populate("products")
-        .populate("products.product")
-        .populate("restaurant coupon user");
-    return res.json(order);
+    var order = await Shipper.findOne({ _id: req.shipper._id })
+        .populate("orders");
+    order.populate("orders.user orders.restaurant orders.coupon", (err, esres) => {
+        return res.json(esres.orders.filter(x => x.status == "completed"));
+    })
 }
 module.exports.getMyFailedOrders = async (req, res) => {
-    var order = await Shipper.findOne({ _id: req.shipper._id, status: "canceled" })
-        .populate("orders")
-        .populate("products")
-        .populate("products.product")
-        .populate("restaurant coupon user");
-    return res.json(order.orders);
+    var order = await Shipper.findOne({ _id: req.shipper._id })
+        .populate("orders");
+    order.populate("orders.user orders.restaurant orders.coupon", (err, esres) => {
+            return res.json(esres.orders.filter(x => x.status == "canceled"));
+    })
 }
 module.exports.getMyShipper = async (req, res) => {
     await Shipper.findOne(req.shipper._id, (err, shipper) => {
@@ -123,7 +123,7 @@ module.exports.sendMyLocation = async (req, res) => {
     let latLng = req.body;
     var io = req.app.locals.io;
     await req.shipper.populate("currentOrder", (err, result) => {
-        io.sockets.in(result.currentOrder.user).emit("shipperLocation",latLng);
+        io.sockets.in(result.currentOrder.user).emit("shipperLocation", latLng);
     })
     return "Successfully";
 }

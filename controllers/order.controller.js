@@ -120,10 +120,9 @@ module.exports.paying = async (req, res) => {
         await order.updateOne(order);
         await order.populate("user", async (err, doc) => {
             await doc.populate("restaurant", (err, resultt) => {
-                io.sockets.emit("newOrder", resultt);
+                return res.json("success");
             })
         })
-        return res.json("success");
     })
 }
 

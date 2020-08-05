@@ -21,7 +21,6 @@ let order = new Schema({
     note: String,
     address: String,
     discount: Number,
-
     coupon: {
         type: Schema.Types.ObjectId,
         ref: "Coupon"

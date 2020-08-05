@@ -5,6 +5,7 @@ let restaurantController = require("../controllers/restaurant.controller");
 let upload = require("../controllers/upload.controller");
 
 router.get("/getMyRestaurants",restaurantController.getMyRestaurants);
+router.get("/paying/:id",restaurantController.paying);
 router.get("/manageMyRestaurant/:id",restaurantController.manageMyRestaurant);
 router.get("/",restaurantController.getRestaurants);
 router.get("/getMenu/:id",restaurantController.getMenu);

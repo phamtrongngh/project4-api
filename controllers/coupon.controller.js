@@ -6,40 +6,53 @@ module.exports.getAll = async (req, res) => {
 }
 module.exports.get = async (req, res) => {
     let code = req.params.code;
-    Coupon.findOne({ code: code }, async(err, coupon) => {
-        coupon.populate("restaurants","_id name avatar",(err,result)=>{
+    Coupon.findOne({ code: code }, async (err, coupon) => {
+        coupon.populate("restaurants", "_id name avatar", (err, result) => {
             return res.json(result);
         })
     })
 }
 
 module.exports.post = async (req, res) => {
-    req.body = JSON.parse(req.body.product);
-    if (req.user.restaurants.find(x => x == req.body.restaurant)) {
-        let product = new Product(req.body);
-        let image = req.file;
-        if (!image) {
-            product.image = "product-default-image.jpg";
-        } else {
-            product.image = image.path.split("\\")[2];
-        }
-        await product.save((err, result) => {
-            if (err) return res.json(err);
-            Restaurant.findOne({ _id: result.restaurant }, async (err, restaurant) => {
-                if (err) return res.json(err);
-                restaurant.menus.push(result._id);
-                await restaurant.updateOne(restaurant);
-                return res.json(product);
-            })
-        })
+    req.body = JSON.parse(req.body.coupon);
+    let coupon = new Coupon(req.body);
+    let image = req.file;
+    if (!image) {
+        coupon.image = "product-default-image.jpg";
+    } else {
+        coupon.image = image.path.split("\\")[2];
     }
-    
+    await coupon.save((err, result) => {
+        if (err) return res.json(err);
+        res.json({ coupon: result });
+    })
 }
 module.exports.put = async (req, res) => {
-
+    req.body = JSON.parse(req.body.coupon);
+    let coupon = await Coupon.findOne({ _id: req.body._id });
+    let image = req.file;
+    let restaurants = coupon.restaurants;
+    if (!image) {} 
+    else {
+        coupon.image = image.path.split("\\")[2]
+    }
+    coupon.code = req.body.code;
+    coupon.name = req.body.name;
+    coupon.description = req.body.description;
+    coupon.discount = req.body.discount;
+    coupon.max = req.body.max;
+    coupon.min = req.body.min;
+    coupon.exp = req.body.min;
+    coupon.percent = req.body.percent;
+    restaurants.push(req.body.restaurants);
+    await coupon.updateOne(coupon);
+    return res.json(coupon);
 }
 module.exports.delete = async (req, res) => {
-
+    let code = req.params.code;
+    await Coupon.deleteOne({ code: code }, (err, result) => {
+        if (err) return res.json(err);
+    });
 }
 
 module.exports.check = async (req, res) => {

@@ -3,7 +3,6 @@ const Comment = require("../models/comment.model");
 const Newfeed = require("../models/newfeed.model");
 const Like = require("../models/like.model");
 const Product = require("../models/product.model");
-const { array } = require("./upload.controller");
 
 module.exports.getUsers = async (req, res) => {
     var users = await User.find();
@@ -125,19 +124,28 @@ module.exports.acceptRequest = async (req, res) => {
 }
 
 module.exports.comment = async (req, res) => {
+    let rep = req.body.reply;
+    req.body.replyTo = rep;
+    req.body.reply= undefined;
     let comment = new Comment(req.body);
     comment.user = req.user._id;
-    comment.newfeed = req.params.id;
-    comment.save((err, doc) => {
-        User.findById(doc.user, async (err, user) => {
-            user.comments.push(doc);
-            await user.updateOne(user);
-        })
+    comment.commentType = "text";
+    comment.save(async (err, doc) => {
+        if (rep){
+            await Comment.findOne({_id:rep},async (err,reply)=>{
+                reply.reply.push(doc._id);
+                await reply.updateOne(reply);
+            })
+        }
         Newfeed.findById(doc.newfeed, async (err, newfeed) => {
             newfeed.comments.push(doc);
             await newfeed.updateOne(newfeed);
         })
-        return res.json(doc);
+        req.user.comments.push(doc._id);
+        await req.user.updateOne(req.user);
+        doc.populate("user",(err,resultss)=>{
+            return res.json(resultss);
+        })
     })
 }
 

@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 const Shipper = require("../models/shipper.model");
+const Admin = require("../models/admin.model");
 const jwt = require("jsonwebtoken");
 
 module.exports.register = async (req, res, next) => {
@@ -80,14 +81,28 @@ module.exports.registerShipper = async (req, res) => {
                 shipper.save((err, result) => {
                     if (err) return res.json({ err });
                     res.json({ shipper: result });
-                    // var io = req.app.locals.io;
-                    // io.on("connection", (socket) => {
-                    //     io.sockets.emit("messageRegister", "There some register");
-                    // })
                 })
             })
         } else {
             res.json({ err: "Phone has been used" });
+        }
+    })
+}
+
+module.exports.loginAdmin = async (req, res) => {
+    Admin.findOne({ username: req.body.username }, (err, user) => {
+        if (err) res.json(err);
+        if (user != null) {
+            if (bcrypt.compareSync(req.body.password, user.password)) {
+                var token = jwt.sign({ _id: user._id, fullname: user.fullname, admin: true, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });
+                res.json({ access_token: token });
+            }
+            else {
+                res.json({ message: "Wrong password" })
+            }
+        }
+        else {
+            res.json({ message: "Wrong username" });
         }
     })
 }
@@ -102,8 +117,6 @@ module.exports.logoutShipper = async (req, res) => {
                 shipper.save((err, result) => {
                     if (err) return res.json({ err });
                     res.json({ shipper: result });
-                    // var io = req.app.locals.io;
-                    // io.sockets.emit("messageRegister", "There some register");
                 })
             })
         } else {
@@ -120,14 +133,26 @@ module.exports.isAuthenticated = (req, res, next) => {
                 res.status(401).json({ message: "Unauthorized" });
             } else {
                 if (!payload.shipper) {
-                    User.findOne({ _id: payload._id }, (err, user) => {
-                        if (user) {
-                            req.user = user;
-                            next();
-                        } else {
-                            res.status(401).json({ message: "Unauthorized user!" });
-                        }
-                    })
+                    if (payload.admin == false) {
+                        User.findOne({ _id: payload._id }, (err, user) => {
+                            if (user) {
+                                req.user = user;
+                                next();
+                            } else {
+                                res.status(401).json({ message: "Unauthorized user!" });
+                            }
+                        })
+                    } else {
+                        Admin.findOne({ _id: payload._id }, (err, user) => {
+                            if (user) {
+                                req.user = user;
+                                next();
+                            } else {
+                                res.status(401).json({ message: "Unauthorized user!" });
+                            }
+                        })
+                    }
+
                 }
                 else {
                     Shipper.findOne({ "_id": payload._id }, (err, shipper) => {

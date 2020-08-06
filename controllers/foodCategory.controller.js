@@ -6,22 +6,17 @@ module.exports.getFoodCategorys = async (req, res) => {
 }
 
 module.exports.createFoodCategory = async (req, res) => {
-    try {
-        const foodCategory = new FoodCategory(req.body)
-        await foodCategory.save((err, result) => {
-            if (err) return res.json({ err });
-            res.json({ foodCategory: result });
-        })
-    }
-    catch (error) {
-        res.status(500).send(error)
-    }
+    const foodCategory = new FoodCategory(req.body)
+    await foodCategory.save((err, result) => {
+        if (err) return res.json({ err });
+        res.json({ foodCategory: result });
+    })
 }
 
 module.exports.getFoodCategory = async (req, res) => {
-    let foodCategory = await FoodCategory.findById({_id: req.params.id}, (err, foodCategory) => {
+    let foodCategory = await FoodCategory.findById({ _id: req.params.id }, (err, foodCategory) => {
         if (err) res.json(res);
-        if (!foodCategory) { return res.json('Cant Find')}
+        if (!foodCategory) { return res.json('Cant Find') }
         else {
             res.json(foodCategory);
         }
@@ -45,6 +40,6 @@ module.exports.updateFoodCategory = async (req, res) => {
 }
 
 module.exports.deleteFoodCategory = async (req, res) => {
-    let result = await FoodCategory.deleteOne({_id: req.params.id}).exec();
+    let result = await FoodCategory.deleteOne({ _id: req.params.id }).exec();
     res.json(result);
 }

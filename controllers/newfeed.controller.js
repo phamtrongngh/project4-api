@@ -3,18 +3,21 @@ const Product = require("../models/product.model");
 const Restaurant = require("../models/restaurant.model");
 const User = require("../models/user.model");
 module.exports.getNewfeeds = async (req, res) => {
-    // await Newfeed.find((err, doc) => {
-    //     doc.populate("restaurant", async (err, result) => {
-    //         return await res.json(result);
-    //     })
-    // })
-    // await Newfeed.find().populate({
-    //     path:"user"
-    // },(err,result)=>{
-    //     return res.json(result);
-    // })
-    
-    res.json(await Newfeed.find().populate("user").populate("restaurant"));
+    await Newfeed.find()
+    .populate({ 
+       path: 'comments restaurant user',
+       populate: {
+         path: 'user reply',         
+         select:"fullname _id avatar content user",
+         populate:{
+            path:"user"   ,
+            select:"fullname _id avatar" 
+        }
+       }
+    }).exec(function(err, docs) {
+        
+        return res.json(docs)
+    });
 }
 
 module.exports.createNewfeed = async (req, res) => {

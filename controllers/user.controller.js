@@ -1,7 +1,6 @@
 const User = require("../models/user.model");
 const Comment = require("../models/comment.model");
 const Newfeed = require("../models/newfeed.model");
-const Like = require("../models/like.model");
 const Product = require("../models/product.model");
 
 module.exports.getUsers = async (req, res) => {
@@ -126,13 +125,13 @@ module.exports.acceptRequest = async (req, res) => {
 module.exports.comment = async (req, res) => {
     let rep = req.body.reply;
     req.body.replyTo = rep;
-    req.body.reply= undefined;
+    req.body.reply = undefined;
     let comment = new Comment(req.body);
     comment.user = req.user._id;
     comment.commentType = "text";
     comment.save(async (err, doc) => {
-        if (rep){
-            await Comment.findOne({_id:rep},async (err,reply)=>{
+        if (rep) {
+            await Comment.findOne({ _id: rep }, async (err, reply) => {
                 reply.reply.push(doc._id);
                 await reply.updateOne(reply);
             })
@@ -143,7 +142,7 @@ module.exports.comment = async (req, res) => {
         })
         req.user.comments.push(doc._id);
         await req.user.updateOne(req.user);
-        doc.populate("user",(err,resultss)=>{
+        doc.populate("user", (err, resultss) => {
             return res.json(resultss);
         })
     })
@@ -214,19 +213,24 @@ module.exports.getCart = async (req, res) => {
         })
     })
 }
+
 module.exports.like = async (req, res) => {
-    let like = new Like(req.body);
-    like.user = req.user._id;
-    like.newfeed = req.params.id;
-    like.save((err, doc) => {
-        User.findById(doc.user, async (err, user) => {
-            user.likes.push(doc);
-            await user.updateOne(user);
-        })
-        Newfeed.findById(doc.newfeed, async (err, newfeed) => {
-            newfeed.likes.push(doc);
+    await Newfeed.findById(req.params.id, async (err, newfeed) => {
+        let item = newfeed.likes.find(x => x == req.user._id);
+        if (!item) {
+            req.user.likes.push(req.params.id);
+            await req.user.updateOne(req.user);
+            newfeed.likes.push(req.user._id);
             await newfeed.updateOne(newfeed);
-        })
-        return res.json(doc);
+            return res.json("like");
+        } else {
+            let index = newfeed.likes.indexOf(item);
+            newfeed.likes.splice(index, 1);
+            await newfeed.updateOne(newfeed);
+            let index2 = req.user.likes.indexOf(item);
+            req.user.likes.splice(index2, 1);
+            await req.user.updateOne(req.user);
+            return res.json("unlike");
+        }
     })
 }

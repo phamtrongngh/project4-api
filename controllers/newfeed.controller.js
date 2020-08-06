@@ -4,22 +4,29 @@ const Restaurant = require("../models/restaurant.model");
 const User = require("../models/user.model");
 module.exports.getNewfeeds = async (req, res) => {
     await Newfeed.find()
-    .populate({ 
-       path: 'comments restaurant user',
-       populate: {
-         path: 'user reply',         
-         select:"fullname _id avatar content user",
-         populate:{
-            path:"user"   ,
-            select:"fullname _id avatar" 
-        }
-       }
-    }).exec(function(err, docs) {
-        
-        return res.json(docs)
-    });
-}
+        .populate({
+            path: 'comments restaurant user',
+            populate: {
+                path: 'user reply',
+                select: "fullname _id avatar content user",
+                populate: {
+                    path: "user",
+                    select: "fullname _id avatar"
+                }
+            }
+        }).exec(function (err, docs) {
 
+            return res.json(docs)
+        });
+}
+module.exports.getListLike = async (req, res) => {
+    var newfeed = req.params.id;
+    Newfeed.findOne({ _id: newfeed }, "likes", async (err, newfeed) => {
+        await newfeed.populate("likes", "fullname _id avatar", (err, listLike) => {
+            return res.json(listLike.likes);
+        })
+    })
+}
 module.exports.createNewfeed = async (req, res) => {
     req.body = JSON.parse(req.body.newfeed);
     const newfeed = new Newfeed(req.body);

@@ -1,6 +1,5 @@
 const Shipper = require('../models/shipper.model');
 const Order = require("../models/order.model");
-const Restaurant = require("../models/restaurant.model");
 module.exports.getShippers = async (req, res) => {
     var shipper = await Shipper.find();
     res.json(shipper);
@@ -125,7 +124,7 @@ module.exports.sendMyLocation = async (req, res) => {
     await req.shipper.populate("currentOrder", (err, result) => {
         io.sockets.in(result.currentOrder.user).emit("shipperLocation", latLng);
     })
-    return "Successfully";
+    return res.json("Successfully");
 }
 module.exports.completeOrder = async (req, res) => {
     let idOrder = req.params.id;

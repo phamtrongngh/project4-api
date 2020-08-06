@@ -21,11 +21,13 @@ module.exports.createFoodCategory = async (req, res) => {
 };
 
 module.exports.getFoodCategory = async (req, res) => {
-    const foodCategory = new FoodCategory(req.body)
-    await foodCategory.save((err, result) => {
-        if (err) return res.json({ err });
-        res.json({ foodCategory: result });
-    })
+    await FoodCategory.findById({ _id: req.params.id }, (err, foodCategory) => {
+        if (err) res.json(res);
+        if (!foodCategory) { return res.json('Cant Find') }
+        else {
+            res.json(foodCategory);
+        }
+    });
 }
 
 module.exports.getFoodCategory = async (req, res) => {
@@ -39,18 +41,17 @@ module.exports.getFoodCategory = async (req, res) => {
 }
 
 module.exports.updateFoodCategory = async (req, res) => {
-  FoodCategory.findById(req.body._id, (err, foodCategory) => {
-    if (err) res.json(err);
-    if (!foodCategory) {
-      return res.json("Cant Find");
+    req.body = JSON.parse(req.body.foodCategory);
+    let footCategory = await FoodCategory.findOne({ _id: req.body._id });
+    let image = req.file;
+    if (!image) {
+        //Nothing
     } else {
-      foodCategory.set(req.body);
-      foodCategory.updateOne((error, result) => {
-        if (error) res.json(error);
-        res.json(result);
-      });
+      footCategory.image = image.path.split("\\")[2];
     }
-  });
+    footCategory.name = req.body.name;
+    await footCategory.updateOne(footCategory);
+    return res.json(footCategory);
 };
 
 module.exports.deleteFoodCategory = async (req, res) => {

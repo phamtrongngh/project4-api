@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const couponController = require("../controllers/coupon.controller");
+let upload = require("../controllers/upload.controller");
 router.get("/",couponController.getAll);
 router.post("/check",couponController.check);
 router.get("/:code",couponController.get);
-router.post("/",couponController.post);
-router.put("/",couponController.put);
+router.post("/", upload.single("image"), couponController.post);
+router.put("/",upload.single("image") ,couponController.put);
 router.delete("/:code",couponController.delete);
 module.exports = router;

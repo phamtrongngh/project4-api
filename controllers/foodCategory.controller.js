@@ -21,11 +21,13 @@ module.exports.createFoodCategory = async (req, res) => {
 };
 
 module.exports.getFoodCategory = async (req, res) => {
-    const foodCategory = new FoodCategory(req.body)
-    await foodCategory.save((err, result) => {
-        if (err) return res.json({ err });
-        res.json({ foodCategory: result });
-    })
+    await FoodCategory.findById({ _id: req.params.id }, (err, foodCategory) => {
+        if (err) res.json(res);
+        if (!foodCategory) { return res.json('Cant Find') }
+        else {
+            res.json(foodCategory);
+        }
+    });
 }
 
 module.exports.getFoodCategory = async (req, res) => {

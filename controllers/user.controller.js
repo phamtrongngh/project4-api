@@ -216,7 +216,7 @@ module.exports.getCart = async (req, res) => {
 
 module.exports.like = async (req, res) => {
     await Newfeed.findById(req.params.id, async (err, newfeed) => {
-        let item = newfeed.likes.find(x => x == req.user._id);
+        let item = newfeed.likes.find(x => x.toString() == req.user._id);
         if (!item) {
             req.user.likes.push(req.params.id);
             await req.user.updateOne(req.user);

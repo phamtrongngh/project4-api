@@ -39,7 +39,7 @@ var userSchema = new Schema({
                 type: Schema.Types.ObjectId,
                 ref: "Newfeed"
             },
-            date:Date,
+            date: Date,
             content: String,
             link: String,
         }
@@ -129,6 +129,12 @@ var userSchema = new Schema({
         {
             type: Schema.Types.ObjectId,
             ref: "Product"
+        }
+    ],
+    likes: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Newfeed"
         }
     ],
     active: Boolean

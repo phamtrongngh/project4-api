@@ -18,6 +18,7 @@ router.post("/requestFriend/:id", userController.requestFriend);
 router.post("/cancelRequest/:id", userController.cancelRequest);
 router.post("/acceptRequest/:id", userController.acceptRequest);
 router.post("/comment/", userController.comment);
+router.post("/like/:id", userController.like);
 
 
 module.exports = router;

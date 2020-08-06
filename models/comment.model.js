@@ -1,18 +1,28 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 let comment = new Schema({
-    user:{
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    },
+    newfeed: {
+        type: Schema.Types.ObjectId,
+        ref: "Newfeed"
+    },
+    reply: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Comment"
+        }
+    ],
+    replyTo:{
         type:Schema.Types.ObjectId,
-        ref:"User"
+        ref:"Comment"
     },
-    newfeed:{
-        type:Schema.Types.ObjectId,
-        ref:"Newfeed"
+    commentType: {
+        type: String,
+        enum: ["text", "image"]
     },
-    commentType:{
-        type:String,
-        enum:["text","image"]
-    },
-    content:String
-},{timestamps:true});
-module.exports = mongoose.model("Comment",comment,"Comment");
+    content: String
+}, { timestamps: true });
+module.exports = mongoose.model("Comment", comment, "Comment");

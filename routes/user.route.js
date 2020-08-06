@@ -17,7 +17,7 @@ router.put("/", upload.single("avatar"), userController.updateUser);
 router.post("/requestFriend/:id", userController.requestFriend);
 router.post("/cancelRequest/:id", userController.cancelRequest);
 router.post("/acceptRequest/:id", userController.acceptRequest);
-router.post("/comment/:id", userController.comment);
+router.post("/comment/", userController.comment);
 
 
 module.exports = router;

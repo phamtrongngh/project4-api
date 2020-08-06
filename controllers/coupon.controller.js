@@ -14,10 +14,26 @@ module.exports.get = async (req, res) => {
 }
 
 module.exports.post = async (req, res) => {
-    let coupon = new Coupon(req.body);
-    coupon.save((err, doc) => {
-        return res.json(doc);
-    })
+    req.body = JSON.parse(req.body.product);
+    if (req.user.restaurants.find(x => x == req.body.restaurant)) {
+        let product = new Product(req.body);
+        let image = req.file;
+        if (!image) {
+            product.image = "product-default-image.jpg";
+        } else {
+            product.image = image.path.split("\\")[2];
+        }
+        await product.save((err, result) => {
+            if (err) return res.json(err);
+            Restaurant.findOne({ _id: result.restaurant }, async (err, restaurant) => {
+                if (err) return res.json(err);
+                restaurant.menus.push(result._id);
+                await restaurant.updateOne(restaurant);
+                return res.json(product);
+            })
+        })
+    }
+    
 }
 module.exports.put = async (req, res) => {
 

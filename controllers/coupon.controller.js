@@ -27,32 +27,41 @@ module.exports.post = async (req, res) => {
         res.json({ coupon: result });
     })
 }
+
 module.exports.put = async (req, res) => {
     req.body = JSON.parse(req.body.coupon);
-    let coupon = await Coupon.findOne({ _id: req.body._id });
+    let coupon = await Coupon.findOne({ code: req.body.code });
+    let product = req.body.restaurants.trim().split(",");
+    let test = product.map(x => {
+        return x.trim();
+    });
+    let restaurants = test.slice(0, test.length - 1);
+    await Restaurant.find({
+        "name": {
+            $in: restaurants
+        }
+    }, async (err, restaurants) => {
+        await coupon.restaurants.push(...restaurants.map(x => x._id));
+    });
     let image = req.file;
-    let restaurants = coupon.restaurants;
     if (!image) {} 
     else {
-        coupon.image = image.path.split("\\")[2]
+        coupon.image = image.path.split("\\")[2];
     }
-    coupon.code = req.body.code;
     coupon.name = req.body.name;
     coupon.description = req.body.description;
     coupon.discount = req.body.discount;
     coupon.max = req.body.max;
     coupon.min = req.body.min;
-    coupon.exp = req.body.min;
+    coupon.exp = req.body.exp;
     coupon.percent = req.body.percent;
-    restaurants.push(req.body.restaurants);
     await coupon.updateOne(coupon);
     return res.json(coupon);
 }
+
 module.exports.delete = async (req, res) => {
-    let code = req.params.code;
-    await Coupon.deleteOne({ code: code }, (err, result) => {
-        if (err) return res.json(err);
-    });
+    let result = await Coupon.deleteOne({ _id: req.params.id }).exec();
+    res.json(result);
 }
 
 module.exports.check = async (req, res) => {

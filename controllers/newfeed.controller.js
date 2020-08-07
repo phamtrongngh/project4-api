@@ -73,9 +73,21 @@ module.exports.getNewfeed = async (req, res) => {
     });
 }
 module.exports.getMyNewfeeds = async (req, res) => {
-    await req.user.populate("newfeeds", async (err, result) => {
-        return await res.json(result);
-    })
+    await Newfeed.find({user:req.user._id})
+        .populate({
+            path: 'comments restaurant user',
+            populate: {
+                path: 'user reply',
+                select: "fullname _id avatar content user",
+                populate: {
+                    path: "user",
+                    select: "fullname _id avatar"
+                }
+            }
+        }).exec(function (err, docs) {
+
+            return res.json(docs)
+        });
 }
 module.exports.updateNewfeed = async (req, res) => {
     Newfeed.findById(req.body._id, (err, newfeed) => {

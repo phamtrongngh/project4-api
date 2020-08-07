@@ -7,6 +7,7 @@ router.get("/", userController.getUsers);
 router.get("/search/:keyword", userController.search);
 router.post("/switchCart", userController.switchCart);
 router.post("/addToCart", userController.addToCart);
+router.post("/sendRouteToShipper", userController.sendRouteToShipper);
 router.get("/getNotifications", userController.getNotifications);
 router.get("/getFriendRequests", userController.getFriendRequests);
 router.delete("/removeFromCart/:id", userController.removeFromCart);

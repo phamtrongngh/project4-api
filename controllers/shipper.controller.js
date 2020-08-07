@@ -45,7 +45,7 @@ module.exports.getMyFailedOrders = async (req, res) => {
     var order = await Shipper.findOne({ _id: req.shipper._id })
         .populate("orders");
     order.populate("orders.user orders.restaurant orders.coupon", (err, esres) => {
-            return res.json(esres.orders.filter(x => x.status == "canceled"));
+        return res.json(esres.orders.filter(x => x.status == "canceled"));
     })
 }
 module.exports.getMyShipper = async (req, res) => {

@@ -2,6 +2,8 @@ const User = require("../models/user.model");
 const Comment = require("../models/comment.model");
 const Newfeed = require("../models/newfeed.model");
 const Product = require("../models/product.model");
+const Order = require("../models/order.model");
+const polyline = require("@mapbox/polyline");
 
 module.exports.getUsers = async (req, res) => {
     var users = await User.find();
@@ -31,7 +33,7 @@ module.exports.getMyUser = async (req, res) => {
         await user.populate("orders newfeeds", async (err, result) => {
             await result.populate("orders.products.product newfeeds.restaurant newfeeds.comments", async (err, doc) => {
                 await doc.populate("orders.products.product.restaurant newfeeds.comments.reply newfeeds.comments.user", async (err, doc2) => {
-                    await doc.populate("newfeeds.comments.reply.user",(err,resultttt)=>{
+                    await doc.populate("newfeeds.comments.reply.user", (err, resultttt) => {
                         return res.json(resultttt);
                     })
                 })
@@ -42,6 +44,15 @@ module.exports.getMyUser = async (req, res) => {
 module.exports.getNotifications = async (req, res) => {
     await req.user.populate("notifications.fromUser notifications.toRestaurant", (err, result) => {
         return res.json(result.notifications);
+    })
+}
+module.exports.sendRouteToShipper = async (req, res) => {
+    var points = req.body.polyline;
+    var idOrder = req.body.idOrder;
+    await Order.findOne({ _id: idOrder }, (err, order) => {
+        var io = req.app.locals.io;
+        var route = polyline.decode(points);
+        io.sockets.in(order.shipper).emit("roadToRestaurant", route);
     })
 }
 module.exports.updateUser = async (req, res) => {

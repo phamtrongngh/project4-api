@@ -77,10 +77,15 @@ module.exports.deleteShipper = async (req, res) => {
 
 module.exports.acceptOrder = async (req, res) => {
     let idOrder = req.params.id;
-    if (!req.shipper.currentOrder) {
-        await Order.findOne({ _id: idOrder }, async (err, order) => {
+    const ACCEPTED_ORDER = 1;
+    const UNCOMPLETE_ORDER = 2;
+    await Order.findOne({ _id: idOrder }, async (err, order) => {
+        if (!req.shipper.currentOrder) {
             if (order.shipper) {
-                return res.json({ message: "Đã có shipper khác nhận đơn hàng này" });
+                await order.populate("user restaurant coupon", (err, doc) => {
+                    doc.message = ACCEPTED_ORDER;
+                    return res.json(doc);
+                });
             } else {
                 order.shipper = req.shipper._id;
                 order.status = "receiving";
@@ -91,19 +96,24 @@ module.exports.acceptOrder = async (req, res) => {
                     var io = req.app.locals.io;
                     io.sockets.in(order.user).emit("acceptOrder", { latLng: [req.body.latitude, req.body.longitude], shipper: req.shipper })
                     await order.populate("user restaurant coupon", (err, doc) => {
+                        io.sockets.emit("removeOrder", doc);
                         return res.json(doc);
                     });
                 });
             }
-        })
-    } else {
-        return res.json("Bạn phải hoàn thành đơn hiện tại!");
-    }
+        } else {
+            await order.populate("user restaurant coupon", (err, doc) => {
+                doc.message = UNCOMPLETE_ORDER;
+                return res.json(doc);
+            });
+        }
+    })
+
 }
 
 module.exports.deliveringOrder = async (req, res) => {
     var io = req.app.locals.io;
-    let idOrder = req.params.id;
+    let idOrder = req.shipper.currentOrder;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
         if (order.shipper.toString() == req.shipper._id) {
             order.status = "delivering";
@@ -114,7 +124,7 @@ module.exports.deliveringOrder = async (req, res) => {
                 })
             })
         } else {
-            return res.json("You do not have permission!");
+            return res.json("Youv do not hae permission!");
         };
     })
 }
@@ -127,7 +137,7 @@ module.exports.sendMyLocation = async (req, res) => {
     return res.json("Successfully");
 }
 module.exports.completeOrder = async (req, res) => {
-    let idOrder = req.params.id;
+    let idOrder = req.shipper.currentOrder;
     var io = req.app.locals.io;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
         if (order.shipper.toString() == req.shipper._id) {
@@ -148,7 +158,7 @@ module.exports.completeOrder = async (req, res) => {
 }
 
 module.exports.cancelOrder = async (req, res) => {
-    let idOrder = req.params.id;
+    let idOrder = req.shipper.currentOrder;
     var io = req.app.locals.io;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
         if (order.shipper.toString() == req.shipper._id) {

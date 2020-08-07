@@ -54,7 +54,7 @@ module.exports.createOrder = async (req, res) => {
             await Restaurant.findOne({ _id: result.products[0].product.restaurant }, async (err, restaurant) => {
                 restaurant.orders.push(result._id);
                 await restaurant.updateOne(restaurant);
-            })
+            });
             if (result.status == "paying") {
                 Momo(result).then(value => {
                     return res.json(value);
@@ -100,6 +100,7 @@ module.exports.cancelOrder = async (req, res) => {
                         await shi.updateOne(shi);
                     })
                     io.sockets.in(order.shipper).emit("cancelOrder", result);
+                    io.sockets.emit("removeOrder",order);
                     return res.json(result);
                 })
             });

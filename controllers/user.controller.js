@@ -30,7 +30,7 @@ module.exports.getMyUser = async (req, res) => {
     let select = "fullname orders newfeeds friends avatar description followers address phone";
     await User.findOne(req.user._id, select, async (err, user) => {
         if (err) return res.json(err);
-        await user.populate("orders newfeeds", async (err, result) => {
+        await user.populate("orders newfeeds friends.user", async (err, result) => {
             await result.populate("orders.products.product newfeeds.restaurant newfeeds.comments", async (err, doc) => {
                 await doc.populate("orders.products.product.restaurant newfeeds.comments.reply newfeeds.comments.user", async (err, doc2) => {
                     await doc.populate("newfeeds.comments.reply.user", (err, resultttt) => {

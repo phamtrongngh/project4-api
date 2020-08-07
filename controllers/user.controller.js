@@ -56,7 +56,7 @@ module.exports.sendRouteToShipper = async (req, res) => {
     await Order.findOne({ _id: idOrder }, (err, order) => {
         var io = req.app.locals.io;
         var route = polyline.decode(points);
-        io.sockets.in(order.shipper).emit("roadToRestaurant", route);
+        io.sockets.emit("roadToRestaurant", route);
     })
 }
 module.exports.updateUser = async (req, res) => {

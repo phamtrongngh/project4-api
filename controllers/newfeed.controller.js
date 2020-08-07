@@ -15,7 +15,6 @@ module.exports.getNewfeeds = async (req, res) => {
                 }
             }
         }).exec(function (err, docs) {
-
             return res.json(docs)
         });
 }

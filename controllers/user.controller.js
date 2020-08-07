@@ -120,6 +120,7 @@ module.exports.cancelRequest = async (req, res) => {
     })
     res.json("Successfully");
 }
+
 module.exports.acceptRequest = async (req, res) => {
     let idRequest = req.params.id;
     await User.findOne(req.user._id, async (err, doc) => {
@@ -159,6 +160,10 @@ module.exports.comment = async (req, res) => {
             return res.json(resultss);
         })
     })
+}
+
+module.exports.follow = async (req, res) => {
+
 }
 
 module.exports.addToCart = async (req, res) => {

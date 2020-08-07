@@ -77,14 +77,17 @@ module.exports.deleteShipper = async (req, res) => {
 
 module.exports.acceptOrder = async (req, res) => {
     let idOrder = req.params.id;
-    const ACCEPTED_ORDER = 1;
-    const UNCOMPLETE_ORDER = 2;
+    const ACCEPTED_ORDER = "1";
+    const UNCOMPLETE_ORDER = "2";
     await Order.findOne({ _id: idOrder }, async (err, order) => {
         if (!req.shipper.currentOrder) {
             if (order.shipper) {
                 await order.populate("user restaurant coupon", (err, doc) => {
-                    doc.message = ACCEPTED_ORDER;
-                    return res.json(doc);
+                    let obj = {
+                        ...doc
+                    }
+                    obj.message = ACCEPTED_ORDER;
+                    return res.json(obj);
                 });
             } else {
                 order.shipper = req.shipper._id;
@@ -103,8 +106,11 @@ module.exports.acceptOrder = async (req, res) => {
             }
         } else {
             await order.populate("user restaurant coupon", (err, doc) => {
-                doc.message = UNCOMPLETE_ORDER;
-                return res.json(doc);
+                let obj = {
+                    ...doc
+                }
+                obj.message = UNCOMPLETE_ORDER;
+                return res.json(obj);
             });
         }
     })

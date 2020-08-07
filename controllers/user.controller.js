@@ -30,8 +30,10 @@ module.exports.getMyUser = async (req, res) => {
         if (err) return res.json(err);
         await user.populate("orders newfeeds", async (err, result) => {
             await result.populate("orders.products.product newfeeds.restaurant newfeeds.comments", async (err, doc) => {
-                await doc.populate("orders.products.product.restaurant newfeeds.comments.reply newfeeds.comments.user", (err, doc2) => {
-                    return res.json(doc);
+                await doc.populate("orders.products.product.restaurant newfeeds.comments.reply newfeeds.comments.user", async (err, doc2) => {
+                    await doc.populate("newfeeds.comments.reply.user",(err,resultttt)=>{
+                        return res.json(resultttt);
+                    })
                 })
             })
         })

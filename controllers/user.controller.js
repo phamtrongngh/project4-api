@@ -16,8 +16,12 @@ module.exports.getUser = async (req, res) => {
         if (!user) { return res.json('Cant Find') }
         else {
             await user.populate("newfeeds", async (err, result) => {
-                await result.populate("newfeeds.restaurant", (err, doc) => {
-                    return res.json(doc);
+                await result.populate("newfeeds.restaurant newfeeds.comments", (err, doc) => {
+                    doc.populate("newfeeds.comments.reply newfeeds.comments.user",(err,result)=>{
+                        result.populate("newfeeds.comments.reply.user",(err,result)=>{
+                            return res.json(result);
+                        })
+                    })
                 })
             })
         }

@@ -9,6 +9,7 @@ var userSchema = new Schema({
     email: String,
     address: String,
     avatar: String,
+    active:Boolean,
     gender: Boolean,
     draft: [
         [
@@ -113,12 +114,20 @@ var userSchema = new Schema({
             ref: "User"
         }
     ],
-    following: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ],
+    following: {
+        users: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "User"
+            }
+        ],
+        restaurants: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Restaurant"
+            }
+        ]
+    },
     coupons: [
         {
             type: Schema.Types.ObjectId,

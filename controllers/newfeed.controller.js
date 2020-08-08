@@ -15,7 +15,8 @@ module.exports.getNewfeeds = async (req, res) => {
                 }
             }
         }).exec(function (err, docs) {
-            return res.json(docs)
+            
+            return res.json(docs.sort(() => Math.random() - 0.5))
         });
 }
 module.exports.getListLike = async (req, res) => {
@@ -72,7 +73,7 @@ module.exports.getNewfeed = async (req, res) => {
     });
 }
 module.exports.getMyNewfeeds = async (req, res) => {
-    await Newfeed.find({user:req.user._id})
+    await Newfeed.find({ user: req.user._id })
         .populate({
             path: 'comments restaurant user',
             populate: {
@@ -84,7 +85,6 @@ module.exports.getMyNewfeeds = async (req, res) => {
                 }
             }
         }).exec(function (err, docs) {
-
             return res.json(docs)
         });
 }

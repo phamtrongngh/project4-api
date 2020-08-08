@@ -4,7 +4,7 @@ const Newfeed = require("../models/newfeed.model");
 const Product = require("../models/product.model");
 const Order = require("../models/order.model");
 const polyline = require("@mapbox/polyline");
-
+const Restaurant = require("../models/restaurant.model");
 module.exports.getUsers = async (req, res) => {
     var users = await User.find();
     res.json(users);
@@ -17,8 +17,8 @@ module.exports.getUser = async (req, res) => {
         else {
             await user.populate("newfeeds friends", async (err, result) => {
                 await result.populate("newfeeds.restaurant newfeeds.comments friends.user", (err, doc) => {
-                    doc.populate("newfeeds.comments.reply newfeeds.comments.user",(err,result)=>{
-                        result.populate("newfeeds.comments.reply.user",(err,result)=>{
+                    doc.populate("newfeeds.comments.reply newfeeds.comments.user", (err, result) => {
+                        result.populate("newfeeds.comments.reply.user", (err, result) => {
                             return res.json(result);
                         })
                     })
@@ -167,7 +167,45 @@ module.exports.comment = async (req, res) => {
 }
 
 module.exports.follow = async (req, res) => {
-
+    if (req.body.target == "user") {
+        await User.findOne({ _id: req.body.idValue }, async (err, user) => {
+            let item = req.user.following.users.find(x => x.toString() == req.body.idValue);
+            if (!item) {
+                req.user.following.users.push(req.body.idValue);
+                await req.user.updateOne(req.user);
+                user.followers.push(req.user._id);
+                await user.updateOne(user);
+                return res.json("follow");
+            } else {
+                let index = user.followers.indexOf(item);
+                user.followers.splice(index, 1);
+                await user.updateOne(user);
+                let index2 = req.user.following.users.indexOf(item);
+                req.user.following.users.splice(index2, 1);
+                await req.user.updateOne(req.user);
+                return res.json("unfollow");
+            }
+        })
+    } else {
+        await Restaurant.findOne({ _id: req.body.idValue }, async (err, restaurant) => {
+            let item = req.user.following.restaurants.find(x => x.toString() == req.body.idValue);
+            if (!item) {
+                req.user.following.restaurants.push(req.body.idValue);
+                await req.user.updateOne(req.user);
+                restaurant.followers.push(req.user._id);
+                await restaurant.updateOne(restaurant);
+                return res.json("follow");
+            } else {
+                let index = restaurant.followers.indexOf(item);
+                restaurant.followers.splice(index, 1);
+                await restaurant.updateOne(restaurant);
+                let index2 = req.user.following.restaurants.indexOf(item);
+                req.user.following.restaurants.splice(index2, 1);
+                await req.user.updateOne(req.user);
+                return res.json("unfollow");
+            }
+        })
+    }
 }
 
 module.exports.addToCart = async (req, res) => {

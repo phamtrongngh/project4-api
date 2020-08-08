@@ -12,6 +12,7 @@ router.get("/getMenu/:id",restaurantController.getMenu);
 router.get("/:id", restaurantController.getRestaurant);
 router.post("/",upload.any(), restaurantController.createRestaurant);
 router.put("/",upload.any(),restaurantController.updateRestaurant);
+router.put("/changeActiveRestaurant/:id", restaurantController.changeActiveRestaurant);
 router.delete("/:id", restaurantController.deleteRestaurant);
 
 module.exports = router;

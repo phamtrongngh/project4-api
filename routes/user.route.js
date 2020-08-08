@@ -17,6 +17,7 @@ router.get("/getMyUser", userController.getMyUser);
 router.get("/getCart", userController.getCart);
 router.get("/:id", userController.getUser);
 router.put("/", upload.single("avatar"), userController.updateUser);
+router.put("/changeActiveUser/:id", userController.changeActiveUser);
 router.post("/requestFriend/:id", userController.requestFriend);
 router.post("/cancelRequest/:id", userController.cancelRequest);
 router.post("/acceptRequest/:id", userController.acceptRequest);

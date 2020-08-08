@@ -93,7 +93,6 @@ module.exports.changeActiveShipper = async (req, res) => {
         shipper.active = true;
         await shipper.updateOne(shipper);
     }
-    console.log(shipper)
     return res.json(shipper);
 }
 

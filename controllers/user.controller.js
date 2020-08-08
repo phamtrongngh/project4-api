@@ -160,6 +160,19 @@ module.exports.updateUser = async (req, res) => {
         }
     });
 }
+
+module.exports.changeActiveUser = async (req, res) => {
+    let user = await User.findOne({ _id: req.params.id });
+    if (user.active == true){
+        user.active = false;
+        await user.updateOne(user);
+    }
+    else {
+        user.active = true;
+        await user.updateOne(user);
+    }
+    return res.json(user);
+}
 module.exports.requestFriend = async (req, res) => {
     let idRequest = req.params.id;
     await User.findOne(req.user._id, async (err, doc) => {

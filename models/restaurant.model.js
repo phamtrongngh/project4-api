@@ -43,7 +43,10 @@ var restaurantSchema = new Schema({
         }
     ],
     address: String,
-    active: Boolean,
+    active: {
+        type:Boolean,
+        default:true
+    },
     verified: Boolean,
     avatar: String,
     licenseImage: String,

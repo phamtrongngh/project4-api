@@ -1,21 +1,32 @@
 const Shipper = require('../models/shipper.model');
 const Order = require("../models/order.model");
+const bcrypt = require("bcrypt");
 module.exports.getShippers = async (req, res) => {
     var shipper = await Shipper.find();
     res.json(shipper);
 }
 
 module.exports.createShipper = async (req, res) => {
-    try {
-        const shipper = new Shipper(req.body)
-        await shipper.save((err, result) => {
-            if (err) return res.json({ err });
-            res.json({ shipper: result });
-        })
-    }
-    catch (error) {
-        res.status(500).send(error)
-    }
+    req.body = JSON.parse(req.body.shipper);
+    Shipper.findOne({ phone: req.body.phone }, (err, shipper) => {
+        if (shipper == null) { 
+            bcrypt.hash(req.body.password, 10, function (err, hash) {
+                if (err) return res.json(err);
+                const shipper = new Shipper(req.body);
+                let avatar = req.file;
+                if (!avatar) {
+                    shipper.avatar = "product-default-image.jpg";
+                } else shipper.avatar = avatar.path.split("\\")[2]; 
+                shipper.password = hash;
+                shipper.save((err, result) => {
+                    if (err) return res.json({ err });
+                    res.json({ shipper: result });
+                })
+            })
+        } else {
+            res.json({ err: "Phone has been used" });
+        }
+    })
 }
 
 module.exports.getShipper = async (req, res) => {
@@ -55,19 +66,34 @@ module.exports.getMyShipper = async (req, res) => {
 }
 
 module.exports.updateShipper = async (req, res) => {
-    Shipper.findById(req.body._id, (err, shipper) => {
-        if (err) res.json(err)
-        if (!shipper) {
-            return res.json('Cant Find');
-        }
-        else {
-            shipper.set(req.body);
-            shipper.updateOne((error, result) => {
-                if (error) res.json(error)
-                res.json(result)
-            });
-        }
-    });
+    req.body = JSON.parse(req.body.coupon);
+    let shipper = await Shipper.findOne({ _id: req.body._id });
+    let avatar = req.file;
+    if (!avatar) {} 
+    else {
+        shipper.avatar = avatar.path.split("\\")[2];
+    }
+    shipper.fullname = req.body.name;
+    shipper.phone = req.body.description;
+    shipper.password = req.body.discount;
+    shipper.dob = req.body.max;
+    shipper.idCard = req.body.min;
+    shipper.gender = req.body.exp;
+    await shipper.updateOne(shipper);
+    return res.json(shipper);
+}
+
+module.exports.changeActiveShipper = async (req, res) => {
+    let shipper = await Shipper.findOne({ _id: req.params.id });
+    if (shipper.active == true){
+        shipper.active = false;
+        await shipper.updateOne(shipper);
+    }
+    else {
+        shipper.active = true;
+        await shipper.updateOne(shipper);
+    }
+    return res.json(shipper);
 }
 
 module.exports.deleteShipper = async (req, res) => {

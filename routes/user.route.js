@@ -5,6 +5,7 @@ let upload = require("../controllers/upload.controller");
 
 router.get("/", userController.getUsers);
 router.get("/search/:keyword", userController.search);
+router.get("/searchAll/:keyword", userController.searchAll);
 router.post("/switchCart", userController.switchCart);
 router.post("/addToCart", userController.addToCart);
 router.post("/sendRouteToShipper", userController.sendRouteToShipper);

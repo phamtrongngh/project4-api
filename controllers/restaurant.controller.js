@@ -2,7 +2,6 @@ const Restaurant = require('../models/restaurant.model');
 const User = require("../models/user.model");
 const Momo = require("../momo.util/momo.restaurant");
 const Pay = require("../models/pay.model");
-const { json } = require('body-parser');
 module.exports.getRestaurants = async (req, res) => {
     var restaurant = await Restaurant.find().populate("managers.user");
     return res.json(restaurant);

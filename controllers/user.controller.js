@@ -27,9 +27,75 @@ module.exports.getUser = async (req, res) => {
         }
     });
 }
+
 module.exports.search = async (req, res) => {
     const keyword = req.params.keyword;
+    let resultRestaurant;
+    let resultUser;
+    let resultProduct;
+    function removeAccents(str) {
+        return str.normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+    }
+    await Restaurant.find(
+        (err, docs) => {
+            resultRestaurant = docs.filter(item => removeAccents(item.name).toLowerCase().includes(removeAccents(keyword.toLowerCase())));
+        }
+    );
+    await User.find(
+        (err, docs) => {
+            resultUser = docs.filter(item => removeAccents(item.fullname).toLowerCase().includes(removeAccents(keyword.toLowerCase())));
+        }
+    );
+    await Product.find(
+        (err, docs) => {
+            resultProduct = docs.filter(item => removeAccents(item.name.toLowerCase()).includes(removeAccents(keyword.toLowerCase())));
+        }
+    );
+    return res.json(
+        {
+            products: resultProduct.slice(0,3),
+            restaurants: resultRestaurant.slice(0,3),
+            users: resultUser.slice(0,3)
+        }
+    )
 }
+
+module.exports.searchAll = async (req, res) => {
+    const keyword = req.params.keyword;
+    let resultRestaurant;
+    let resultUser;
+    let resultProduct;
+    function removeAccents(str) {
+        return str.normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+    }
+    await Restaurant.find(
+        (err, docs) => {
+            resultRestaurant = docs.filter(item => removeAccents(item.name).toLowerCase().includes(removeAccents(keyword.toLowerCase())));
+        }
+    );
+    await User.find(
+        (err, docs) => {
+            resultUser = docs.filter(item => removeAccents(item.fullname).toLowerCase().includes(removeAccents(keyword.toLowerCase())));
+        }
+    );
+    await Product.find(
+        (err, docs) => {
+            resultProduct = docs.filter(item => removeAccents(item.name.toLowerCase()).includes(removeAccents(keyword.toLowerCase())));
+        }
+    );
+    return res.json(
+        {
+            products: resultProduct,
+            restaurants: resultRestaurant,
+            users: resultUser
+        }
+    )
+}
+
 module.exports.getMyUser = async (req, res) => {
     let select = "fullname orders newfeeds friends avatar description followers address phone";
     await User.findOne(req.user._id, select, async (err, user) => {

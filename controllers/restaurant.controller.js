@@ -75,6 +75,7 @@ module.exports.getRestaurant = async (req, res) => {
                 await result.populate("newfeeds.comments", async (err, result) => {
                     await result.populate("newfeeds.comments.reply newfeeds.comments.user", async (err, result) => {
                         await result.populate("newfeeds.comments.reply.user", async (err, result) => {
+                            result.newfeeds = result.newfeeds.reverse();
                             return res.json(result);
                         })
                     })
@@ -121,6 +122,7 @@ module.exports.manageMyRestaurant = async (req, res) => {
             await docc.populate("newfeeds.comments", async (err, docc) => {
                 await docc.populate("newfeeds.comments.user newfeeds.comments.reply", async (err, docc) => {
                     await docc.populate("newfeeds.comments.reply.user", async (err, docc) => {
+                        docc.newfeeds = docc.newfeeds.reverse();
                         return res.json(docc);
                     })
                 })

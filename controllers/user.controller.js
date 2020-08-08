@@ -27,7 +27,17 @@ module.exports.getUser = async (req, res) => {
         }
     });
 }
-
+module.exports.searchByFullName = async (req, res) => {
+    const keyword = req.params.keyword;
+    function removeAccents(str) {
+        return str.normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd').replace(/Đ/g, 'D');
+    }
+    let resultUser = await User.find().select("fullname _id avatar");
+    
+    return res.json(resultUser.filter(item => removeAccents(item.fullname).toLowerCase().includes(removeAccents(keyword.toLowerCase()))));
+}
 module.exports.search = async (req, res) => {
     const keyword = req.params.keyword;
     let resultRestaurant;
@@ -55,9 +65,9 @@ module.exports.search = async (req, res) => {
     );
     return res.json(
         {
-            products: resultProduct.slice(0,3),
-            restaurants: resultRestaurant.slice(0,3),
-            users: resultUser.slice(0,3)
+            products: resultProduct.slice(0, 3),
+            restaurants: resultRestaurant.slice(0, 3),
+            users: resultUser.slice(0, 3)
         }
     )
 }
@@ -104,6 +114,7 @@ module.exports.getMyUser = async (req, res) => {
             await result.populate("orders.products.product newfeeds.restaurant newfeeds.comments", async (err, doc) => {
                 await doc.populate("orders.products.product.restaurant newfeeds.comments.reply newfeeds.comments.user", async (err, doc2) => {
                     await doc.populate("newfeeds.comments.reply.user", (err, resultttt) => {
+                        resultttt.newfeeds =  resultttt.newfeeds.reverse();
                         return res.json(resultttt);
                     })
                 })

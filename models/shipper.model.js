@@ -8,6 +8,7 @@ let shipper = new Scheme(
         dob: Date,
         idCard: String,
         gender: Boolean,
+        active: Boolean,
         avatar: String,
         currentOrder: {
             type: Scheme.Types.ObjectId,

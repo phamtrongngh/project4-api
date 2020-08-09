@@ -28,6 +28,10 @@ var newfeedSchema = new Schema({
             ref:"Comment"
         }
     ],
+    active: {
+      type:Boolean,
+      default:true  
+    },
     typed: Boolean //true = Normal Newfeed | false = Food Newfeed
 }, { timestamps: true })
 module.exports = mongoose.model("Newfeed", newfeedSchema, "Newfeed");

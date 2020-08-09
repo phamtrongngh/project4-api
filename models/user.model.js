@@ -9,7 +9,10 @@ var userSchema = new Schema({
     email: String,
     address: String,
     avatar: String,
-    active:Boolean,
+    active:{
+        type:Boolean,
+        default:true
+    },
     gender: Boolean,
     draft: [
         [

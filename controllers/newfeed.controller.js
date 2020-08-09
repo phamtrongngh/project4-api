@@ -103,6 +103,18 @@ module.exports.updateNewfeed = async (req, res) => {
         }
     });
 }
+module.exports.changeActiveNewfeed = async (req, res) => {
+    let newfeed = await Newfeed.findOne({ _id: req.params.id });
+    if (newfeed.active == true){
+        newfeed.active = false;
+        await newfeed.updateOne(newfeed);
+    }
+    else {
+        newfeed.active = true;
+        await newfeed.updateOne(newfeed);
+    }
+    return res.json(newfeed);
+}
 
 module.exports.deleteNewfeed = async (req, res) => {
     let result = await Newfeed.deleteOne({ _id: req.params.id }).exec();

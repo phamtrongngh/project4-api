@@ -163,6 +163,19 @@ module.exports.updateRestaurant = async (req, res) => {
     })
 }
 
+module.exports.changeActiveRestaurant = async (req, res) => {
+    let restaurant = await Restaurant.findOne({ _id: req.params.id });
+    if (restaurant.active == true){
+        restaurant.active = false;
+        await restaurant.updateOne(restaurant);
+    }
+    else {
+        restaurant.active = true;
+        await restaurant.updateOne(restaurant);
+    }
+    return res.json(restaurant);
+}
+
 module.exports.deleteRestaurant = async (req, res) => {
     await Restaurant.deleteOne({ _id: req.params.id }, (err) => {
         if (err) return res.json(err);

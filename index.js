@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost:27017/foodtap", { useNewUrlParser: true, useUnifiedTopology: true });
 
+const reportRoute = require("./routes/report.route.js")
 const userRoute = require("./routes/user.route.js");
 const newfeedRoute = require("./routes/newfeed.route");
 const restaurantRoute = require("./routes/restaurent.route.js");
@@ -35,6 +36,7 @@ app.use("/foodcategory", foodCategoryRoute);
 app.use("/shipper", shipperRoute);
 app.use("/order", orderRoute);
 app.use("/coupon", couponRoute);
+app.use("/report", reportRoute);
 app.use("/user", userRoute);
 server.listen(9032, () => {
     console.log("Server is running...");

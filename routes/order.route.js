@@ -4,6 +4,7 @@ let orderController = require("../controllers/order.controller");
 
 router.get("/",orderController.getOrders);
 router.get("/orderfinding",orderController.getFindingOrders);
+router.post("/rate",orderController.rate);
 router.post("/cancelOrder/:id",orderController.cancelOrder);
 router.get("/paying/:id",orderController.paying);
 router.get("/:id", orderController.getOrder);

@@ -43,6 +43,8 @@ module.exports.createOrder = async (req, res) => {
     }, (err, listProduct) => {
         order.restaurant = listProduct[0].restaurant;
     })
+    order.rated.restaurant = false;
+    order.rated.shipper = false;
     await order.save(async (err, doc) => {
         if (err) {
             console.log(err);
@@ -85,7 +87,38 @@ module.exports.createOrder = async (req, res) => {
 
     });
 }
-
+module.exports.rate = async (req, res) => {
+    if (req.body.type == "shipper") {
+        await Order.findOne({ _id: req.body.orderId }, async (err, order) => {
+            order.rated.shipper = true;
+            await order.updateOne(order);
+        })
+        await Shipper.findOne({ _id: req.body.targetId }, async (err, shipper) => {
+            var data = {
+                user: req.user._id,
+                stars: parseInt(req.body.star),
+                comment: req.body.content
+            }
+            shipper.rating.push(data);
+            await shipper.updateOne(shipper);
+        })
+    } else {
+        await Order.findOne({ _id: req.body.orderId }, async (err, order) => {
+            order.rated.restaurant = true;
+            await order.updateOne(order);
+        })
+        await Restaurant.findOne({ _id: req.body.targetId }, async (err, restaurant) => {
+            var data = {
+                user: req.user._id,
+                stars: parseInt(req.body.star),
+                comment: req.body.content
+            }
+            restaurant.rating.push(data);
+            await restaurant.updateOne(restaurant);
+        })
+    }
+    return res.json("");
+}
 module.exports.cancelOrder = async (req, res) => {
     let idOrder = req.params.id;
     var io = req.app.locals.io;
@@ -100,7 +133,7 @@ module.exports.cancelOrder = async (req, res) => {
                         await shi.updateOne(shi);
                     })
                     io.sockets.in(order.shipper).emit("cancelOrder", result);
-                    io.sockets.emit("removeOrder",order);
+                    io.sockets.emit("removeOrder", order);
                     return res.json(result);
                 })
             });

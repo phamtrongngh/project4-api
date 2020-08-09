@@ -42,16 +42,31 @@ var restaurantSchema = new Schema({
             ref: "Coupon"
         }
     ],
+    rating: [
+        {
+            user: {
+                type: Schema.Types.ObjectId,
+                ref: "User"
+            },
+            stars: {
+                type: Number,
+                min: 1,
+                max: 5
+            },
+            comment: String
+        }
+    ],
     address: String,
     active: {
-        type:Boolean,
-        default:true
+        type: Boolean,
+        default: true
     },
     verified: Boolean,
     avatar: String,
     licenseImage: String,
     openAt: String,
     closeAt: String,
+
     followers: [
         {
             type: Schema.Types.ObjectId,

@@ -125,7 +125,7 @@ module.exports.getMyUser = async (req, res) => {
 }
 module.exports.getNotifications = async (req, res) => {
     await req.user.populate("notifications.fromUser notifications.toRestaurant", (err, result) => {
-        return res.json(result.notifications);
+        return res.json(result.notifications.reverse());
     })
 }
 module.exports.sendRouteToShipper = async (req, res) => {

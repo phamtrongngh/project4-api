@@ -15,6 +15,8 @@ module.exports.getConversation = async (req, res) => {
                 messages: messages,
                 user: UserB
             }
+            conversation.status = true;
+            await user.updateOne(user)
             return res.json(responseObj);
         })
     } else {
@@ -29,7 +31,12 @@ module.exports.getConversation = async (req, res) => {
 
 module.exports.getAllChatter = async (req, res) => {
     User.findOne({ _id: req.user._id }, (err, result) => {
-        result.populate("conversations.user", (err, docss) => {
+        result.populate("conversations.user conversations.messages","-restaurants -comments -orders -newfeeds -likes -friends -conversations", (err, docss) => {
+            docss.conversations.map(item=>{
+                item.message = item.messages.reverse();
+                return item;
+            });
+            docss.conversations = docss.conversations.reverse();
             return res.json(docss.conversations);
         });
     })
@@ -50,7 +57,8 @@ module.exports.sendMessage = async (req, res) => {
                 } else {
                     sender.conversations.push({
                         user: result.receiver,
-                        messages: [result._id]
+                        messages: [result._id],
+                        status: false
                     })
                 }
                 await sender.updateOne(sender);
@@ -58,11 +66,13 @@ module.exports.sendMessage = async (req, res) => {
             await User.findOne({ _id: result.receiver }, async (err, receiver) => {
                 let check = receiver.conversations.find(x => x.user == result.sender.toString());
                 if (check) {
+                    check.status = false;
                     check.messages.push(result._id);
                 } else {
                     receiver.conversations.push({
                         user: result.sender,
-                        messages: [result._id]
+                        messages: [result._id],
+                        status: false
                     })
                 }
                 await receiver.updateOne(receiver);

@@ -9,9 +9,9 @@ var userSchema = new Schema({
     email: String,
     address: String,
     avatar: String,
-    active:{
-        type:Boolean,
-        default:true
+    active: {
+        type: Boolean,
+        default: true
     },
     gender: Boolean,
     draft: [
@@ -45,7 +45,7 @@ var userSchema = new Schema({
             },
             date: Date,
             content: String,
-            link: String,
+            link: String
         }
     ],
     friends: [
@@ -102,7 +102,8 @@ var userSchema = new Schema({
                     type: Schema.Types.ObjectId,
                     ref: "Message"
                 }
-            ]
+            ],
+            status:Boolean // true = Readed,  false = hasn't been readed
         }
     ],
     newfeeds: [

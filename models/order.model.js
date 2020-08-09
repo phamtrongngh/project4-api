@@ -35,6 +35,10 @@ let order = new Schema({
         type: String,
         enum: ["paying", "finding", "receiving, delivering, completed, canceled"]
     },
+    rated:{
+        restaurant: Boolean,
+        shipper: Boolean
+    },
     canceledBy:{
         type:String,
         enum:["user","shipper"]

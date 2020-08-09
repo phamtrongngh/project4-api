@@ -11,12 +11,14 @@ var reportSchema = new Schema({
     },
     restaurant: {
         type: Schema.Types.ObjectId,
-        ref: "Retaurant"
+        ref: "Restaurant"
     },
     newfeed: {
         type: Schema.Types.ObjectId,
         ref: "Newfeed"
     },
-    content: String
+    typed: String, 
+    content: String,
+    response: String
 }, { timestamps: true }) 
 module.exports = mongoose.model("Report", reportSchema, "Report")

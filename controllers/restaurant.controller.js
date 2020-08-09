@@ -119,7 +119,7 @@ module.exports.manageMyRestaurant = async (req, res) => {
         let restaurant = await Restaurant.findOne({ _id: idRestaurant })
             .populate(["menus", "orders", "newfeeds", "followers"]);
         await restaurant.populate("orders.user orders.shipper orders.products.product orders.restaurant", "_id fullname name image price", async (err, docc) => {
-            await docc.populate("newfeeds.comments", async (err, docc) => {
+            await docc.populate("newfeeds.comments menus.category", async (err, docc) => {
                 await docc.populate("newfeeds.comments.user newfeeds.comments.reply", async (err, docc) => {
                     await docc.populate("newfeeds.comments.reply.user", async (err, docc) => {
                         docc.newfeeds = docc.newfeeds.reverse();

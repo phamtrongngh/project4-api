@@ -19,7 +19,7 @@ module.exports.getUser = async (req, res) => {
                 await result.populate("newfeeds.restaurant newfeeds.comments friends.user", (err, doc) => {
                     doc.populate("newfeeds.comments.reply newfeeds.comments.user", (err, result) => {
                         result.populate("newfeeds.comments.reply.user", (err, result) => {
-                            result.newfeeds =  result.newfeeds.reverse();
+                            result.newfeeds = result.newfeeds.reverse();
                             return res.json(result);
                         })
                     })
@@ -36,8 +36,8 @@ module.exports.searchByFullName = async (req, res) => {
             .replace(/đ/g, 'd').replace(/Đ/g, 'D');
     }
     let resultUser = await User.find().select("fullname _id avatar");
-    
-    return res.json(resultUser.filter(item => removeAccents(item.fullname).toLowerCase().includes(removeAccents(keyword.toLowerCase()))));
+
+    return res.json(resultUser.filter(item => removeAccents(item.fullname).toLowerCase().includes(removeAccents(keyword.toLowerCase())) && (req.user._id.toString()!=item._id)));
 }
 module.exports.search = async (req, res) => {
     const keyword = req.params.keyword;
@@ -115,7 +115,7 @@ module.exports.getMyUser = async (req, res) => {
             await result.populate("orders.products.product newfeeds.restaurant newfeeds.comments", async (err, doc) => {
                 await doc.populate("orders.products.product.restaurant newfeeds.comments.reply newfeeds.comments.user", async (err, doc2) => {
                     await doc.populate("newfeeds.comments.reply.user", (err, resultttt) => {
-                        resultttt.newfeeds =  resultttt.newfeeds.reverse();
+                        resultttt.newfeeds = resultttt.newfeeds.reverse();
                         return res.json(resultttt);
                     })
                 })

@@ -28,8 +28,8 @@ module.exports.getConversation = async (req, res) => {
 }
 
 module.exports.getAllChatter = async (req, res) => {
-    User.findOne({_id:req.user._id},(err,result)=>{
-        result.populate("conversations.user",(err,docss)=>{
+    User.findOne({ _id: req.user._id }, (err, result) => {
+        result.populate("conversations.user", (err, docss) => {
             return res.json(docss.conversations);
         });
     })
@@ -53,10 +53,7 @@ module.exports.sendMessage = async (req, res) => {
                         messages: [result._id]
                     })
                 }
-                
                 await sender.updateOne(sender);
-                
-                io.sockets.in(sender._id).emit("sendMessage", doc);
             })
             await User.findOne({ _id: result.receiver }, async (err, receiver) => {
                 let check = receiver.conversations.find(x => x.user == result.sender.toString());
@@ -71,8 +68,8 @@ module.exports.sendMessage = async (req, res) => {
                 await receiver.updateOne(receiver);
                 io.sockets.in(receiver._id).emit("sendMessage", doc);
             });
-            
-            
+
+
         })
     })
     return res.json("");

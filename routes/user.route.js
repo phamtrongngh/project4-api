@@ -9,6 +9,8 @@ router.get("/searchAll/:keyword", userController.searchAll);
 router.get("/searchByFullName/:keyword", userController.searchByFullName);
 router.post("/switchCart", userController.switchCart);
 router.post("/addToCart", userController.addToCart);
+router.post("/recart/:index", userController.recart);
+router.post("/reorder/:id", userController.reorder);
 router.post("/sendRouteToShipper", userController.sendRouteToShipper);
 router.get("/getNotifications", userController.getNotifications);
 router.get("/getFriendRequests", userController.getFriendRequests);

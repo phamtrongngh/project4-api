@@ -37,7 +37,7 @@ module.exports.searchByFullName = async (req, res) => {
     }
     let resultUser = await User.find().select("fullname _id avatar");
 
-    return res.json(resultUser.filter(item => removeAccents(item.fullname).toLowerCase().includes(removeAccents(keyword.toLowerCase())) && (req.user._id.toString()!=item._id)));
+    return res.json(resultUser.filter(item => removeAccents(item.fullname).toLowerCase().includes(removeAccents(keyword.toLowerCase())) && (req.user._id.toString() != item._id)));
 }
 module.exports.search = async (req, res) => {
     const keyword = req.params.keyword;
@@ -108,11 +108,11 @@ module.exports.searchAll = async (req, res) => {
 }
 
 module.exports.getMyUser = async (req, res) => {
-    let select = "fullname orders newfeeds friends avatar description followers following address phone";
+    let select = "fullname orders newfeeds friends avatar draft description followers following address phone";
     await User.findOne(req.user._id, select, async (err, user) => {
         if (err) return res.json(err);
-        await user.populate("orders newfeeds friends.user following.users following.restaurants", async (err, result) => {
-            await result.populate("orders.products.product newfeeds.restaurant newfeeds.comments", async (err, doc) => {
+        await user.populate("orders newfeeds friends.user draft.product following.users following.restaurants", async (err, result) => {
+            await result.populate("orders.products.product draft.product.restaurant newfeeds.restaurant newfeeds.comments", async (err, doc) => {
                 await doc.populate("orders.products.product.restaurant newfeeds.comments.reply newfeeds.comments.user", async (err, doc2) => {
                     await doc.populate("newfeeds.comments.reply.user", (err, resultttt) => {
                         resultttt.newfeeds = resultttt.newfeeds.reverse();
@@ -163,7 +163,7 @@ module.exports.updateUser = async (req, res) => {
 
 module.exports.changeActiveUser = async (req, res) => {
     let user = await User.findOne({ _id: req.params.id });
-    if (user.active == true){
+    if (user.active == true) {
         user.active = false;
         await user.updateOne(user);
     }
@@ -363,6 +363,20 @@ module.exports.getCart = async (req, res) => {
             return res.json(result);
         })
     })
+}
+module.exports.recart = async (req, res) => {
+    req.user.cart = req.user.draft[req.params.index];
+    await req.user.updateOne(req.user);
+    return res.json(req.user.cart.length);
+}
+
+module.exports.reorder = async (req, res) => {
+    Order.findOne({ _id: req.params.id }, async (err, order) => {
+        req.user.cart = order.products;
+        await req.user.updateOne(req.user);
+        return res.json(req.user.cart.length);
+    })
+
 }
 
 module.exports.like = async (req, res) => {

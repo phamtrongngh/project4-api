@@ -68,7 +68,9 @@ module.exports.getNewfeed = async (req, res) => {
         if (err) res.json(res);
         if (!newfeed) { return res.json('Cant Find') }
         else {
-            res.json(newfeed);
+            newfeed.populate("restaurant user", (err, newfeed) =>{
+                return res.json(newfeed);
+            });
         }
     });
 }
@@ -89,6 +91,7 @@ module.exports.getMyNewfeeds = async (req, res) => {
         });
 }
 module.exports.updateNewfeed = async (req, res) => {
+    console.log(req.body);
     Newfeed.findById(req.body._id, (err, newfeed) => {
         if (err) res.json(err)
         if (!newfeed) {

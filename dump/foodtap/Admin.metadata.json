@@ -1,0 +1,1 @@
+{"options":{},"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_","ns":"foodtap.Admin"}],"uuid":"356f2f65b95a4a17a1db5cc07e1a5403"}

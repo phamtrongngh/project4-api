@@ -398,8 +398,8 @@ module.exports.like = async (req, res) => {
                 }
                 user.notifications.push(noti);
                 await user.updateOne(user);
-                noti.avatar = user.avatar;
-                noti.fullname = user.fullname;
+                noti.avatar = req.user.avatar;
+                noti.fullname = req.user.fullname;
                 io.sockets.in(newfeed.user.toString()).emit("likeNewfeed",noti);
             })
             return res.json("like");

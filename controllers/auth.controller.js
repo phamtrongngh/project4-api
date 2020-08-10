@@ -136,8 +136,12 @@ module.exports.isAuthenticated = (req, res, next) => {
                     if (payload.admin == false) {
                         User.findOne({ _id: payload._id }, (err, user) => {
                             if (user) {
-                                req.user = user;
-                                next();
+                                if (user.active){
+                                    req.user = user;
+                                    next();
+                                }else{
+                                    return res.status(325).json({message:"Account has been disabled"})
+                                }
                             } else {
                                 res.status(401).json({ message: "Unauthorized user!" });
                             }

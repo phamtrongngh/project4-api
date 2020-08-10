@@ -89,8 +89,22 @@ module.exports.getMenu = async (req, res) => {
         if (err) return res.json(err);
         if (!restaurant) { return res.json('Cant Find') }
         else {
-            await restaurant.populate("menus", (err, result) => {
-                return res.json(result);
+            await restaurant.populate("menus",async (err, result) => {
+                await result.populate("menus.category", (err, result) => {
+                    let a= [];
+                    var objectResponse = {...result};
+                    let categoryArray = objectResponse._doc.menus.reduce((pre, cur) => {
+                        pre.push(...cur.category);
+                        return pre;
+                    }, []);
+                    objectResponse._doc.category = categoryArray.map(x=>{
+                        if (!a.includes(x.name)){
+                            a.push(x.name)
+                            return x;
+                        }
+                    })
+                    return res.json(objectResponse._doc);
+                })
             })
         }
     });

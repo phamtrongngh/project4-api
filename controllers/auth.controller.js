@@ -136,11 +136,11 @@ module.exports.isAuthenticated = (req, res, next) => {
                     if (payload.admin == false) {
                         User.findOne({ _id: payload._id }, (err, user) => {
                             if (user) {
-                                if (user.active){
+                                if (user.active) {
                                     req.user = user;
                                     next();
-                                }else{
-                                    return res.status(325).json({message:"Account has been disabled"})
+                                } else {
+                                    return res.status(325).json({ message: "Account has been disabled" })
                                 }
                             } else {
                                 res.status(401).json({ message: "Unauthorized user!" });
@@ -161,8 +161,12 @@ module.exports.isAuthenticated = (req, res, next) => {
                 else {
                     Shipper.findOne({ "_id": payload._id }, (err, shipper) => {
                         if (shipper) {
-                            req.shipper = shipper;
-                            next();
+                            if (shipper.active) {
+                                req.shipper = shipper;
+                                next();
+                            }else{
+                                return res.json("Your account is disabled");
+                            }
                         } else {
                             res.status(401).json({ message: "Unauthorized user!" });
                         }

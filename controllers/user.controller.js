@@ -124,7 +124,7 @@ module.exports.getMyUser = async (req, res) => {
     })
 }
 module.exports.getNotifications = async (req, res) => {
-    await req.user.populate("notifications.fromUser notifications.toRestaurant", (err, result) => {
+    await req.user.populate("notifications.fromUser notifications.toRestaurant notifications.toNewfeed", (err, result) => {
         return res.json(result.notifications.reverse());
     })
 }
@@ -398,8 +398,8 @@ module.exports.like = async (req, res) => {
                 }
                 user.notifications.push(noti);
                 await user.updateOne(user);
-                noti.avatar = user.avatar;
-                noti.fullname = user.fullname;
+                noti.avatar = req.user.avatar;
+                noti.fullname = req.user.fullname;
                 io.sockets.in(newfeed.user.toString()).emit("likeNewfeed",noti);
             })
             return res.json("like");

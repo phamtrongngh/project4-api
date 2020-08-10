@@ -72,7 +72,7 @@ module.exports.getRestaurant = async (req, res) => {
         if (!restaurant) { return res.json('Cant Find') }
         else {
             await restaurant.populate("newfeeds menus", async (err, result) => {
-                await result.populate("newfeeds.comments", async (err, result) => {
+                await result.populate("newfeeds.comments rating.user", async (err, result) => {
                     await result.populate("newfeeds.comments.reply newfeeds.comments.user", async (err, result) => {
                         await result.populate("newfeeds.comments.reply.user", async (err, result) => {
                             result.newfeeds = result.newfeeds.reverse();
@@ -134,7 +134,7 @@ module.exports.manageMyRestaurant = async (req, res) => {
             .populate(["menus", "orders", "newfeeds", "followers"]);
         await restaurant.populate("orders.user orders.shipper orders.products.product orders.restaurant", "_id fullname name image price", async (err, docc) => {
             await docc.populate("newfeeds.comments menus.category", async (err, docc) => {
-                await docc.populate("newfeeds.comments.user newfeeds.comments.reply", async (err, docc) => {
+                await docc.populate("newfeeds.comments.user rating.user newfeeds.comments.reply", async (err, docc) => {
                     await docc.populate("newfeeds.comments.reply.user", async (err, docc) => {
                         docc.newfeeds = docc.newfeeds.reverse();
                         return res.json(docc);

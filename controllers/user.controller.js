@@ -387,6 +387,21 @@ module.exports.like = async (req, res) => {
             await req.user.updateOne(req.user);
             newfeed.likes.push(req.user._id);
             await newfeed.updateOne(newfeed);
+            var io = req.app.locals.io;
+            await User.findOne({_id:newfeed.user}, async(err,user)=>{
+                let noti = {
+                    fromUser: req.user._id,
+                    toNewfeed: newfeed,
+                    content:"đã like bài viết của bạn",
+                    date : Date.now(),
+                    link: "/detail-newfeed/"+newfeed._id
+                }
+                user.notifications.push(noti);
+                await user.updateOne(user);
+                noti.avatar = user.avatar;
+                noti.fullname = user.fullname;
+                io.sockets.in(newfeed.user.toString()).emit("likeNewfeed",noti);
+            })
             return res.json("like");
         } else {
             let index = newfeed.likes.indexOf(item);

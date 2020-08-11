@@ -40,11 +40,21 @@ module.exports.put = async (req, res) => {
         "name": {
             $in: restaurants
         }
-    }, async (err, restaurants) => {
-        coupon.restaurants = restaurants.map(x => x._id);
+    }, async (err, restaurantList) => {
+        coupon.restaurants = restaurantList.map(x => x._id);
+        // restaurantList.forEach(async item=>{
+        //     var i = item.coupons.find(x=>x._id.toString()==coupon._id);
+        //     if (!i){
+        //         item.coupons.push(coupon._id);
+        //     }else{
+        //         item.coupons = item.coupons.filter(value => restaurants.includes(value.toString()))
+        //     }
+        //     await item.updateOne(item);
+        //     console.log("1")
+        // })
     });
     let image = req.file;
-    if (!image) {} 
+    if (!image) { }
     else {
         coupon.image = image.path.split("\\")[2];
     }
@@ -57,7 +67,7 @@ module.exports.put = async (req, res) => {
     coupon.exp = date;
     coupon.percent = req.body.percent;
     await coupon.updateOne(coupon);
-    return res.json(coupon);
+    res.json(coupon);
 }
 
 module.exports.delete = async (req, res) => {
@@ -70,18 +80,13 @@ module.exports.check = async (req, res) => {
     const code = req.body.code;
     await Coupon.findOne({ code: code.toUpperCase() }, async (err, coupon) => {
         if (coupon) {
-            await Restaurant.findOne({ _id: restaurantId }, (err, restaurant) => {
-                if (err) return res.json(err);
-                if (restaurant.coupons.find(x => x == coupon._id.toString())) {
-                    if (req.user.coupons.find(x => x == coupon._id.toString())) {
-                        return res.json(coupon);
-                    } else {
-                        return res.json("not found coupon user")
-                    }
-                } else {
-                    return res.json("not found coupon restaurant");
-                }
-            })
+
+            if (coupon.restaurants.find(x => x == restaurantId)) {
+                return res.json(coupon);
+            } else {
+                return res.json("not found coupon restaurant");
+            }
+
         } else {
             return res.json("not found coupon");
         }

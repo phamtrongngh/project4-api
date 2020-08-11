@@ -196,3 +196,5 @@ module.exports.deleteOrder = async (req, res) => {
     let result = await Order.deleteOne({ _id: req.params.id }).exec();
     res.json(result);
 }
+
+

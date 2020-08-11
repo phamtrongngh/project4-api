@@ -36,7 +36,7 @@ module.exports.getShipper = async (req, res) => {
         else {
             res.json(shipper);
         }
-    });
+    }).populate("orders");
 }
 module.exports.getMyOrders = async (req, res) => {
     let orders = await Order.find({ shipper: req.shipper._id })

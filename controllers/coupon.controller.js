@@ -80,13 +80,11 @@ module.exports.check = async (req, res) => {
     const code = req.body.code;
     await Coupon.findOne({ code: code.toUpperCase() }, async (err, coupon) => {
         if (coupon) {
-
             if (coupon.restaurants.find(x => x == restaurantId)) {
                 return res.json(coupon);
             } else {
                 return res.json("not found coupon restaurant");
             }
-
         } else {
             return res.json("not found coupon");
         }

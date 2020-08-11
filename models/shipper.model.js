@@ -8,6 +8,10 @@ let shipper = new Scheme(
         dob: Date,
         idCard: String,
         gender: Boolean,
+        numberCancel: {
+            type:Number,
+            default:0
+        },
         active: {
             type:Boolean, 
             default: true

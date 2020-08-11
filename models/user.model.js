@@ -25,6 +25,10 @@ var userSchema = new Schema({
             }
         ]
     ],
+    numberCancel:{
+        type:Number,
+        default:0
+    },
     notifications: [
         {
             fromUser: {

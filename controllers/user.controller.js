@@ -137,6 +137,20 @@ module.exports.sendRouteToShipper = async (req, res) => {
         io.sockets.emit("road", route);
     })
 }
+module.exports.sendLocationUser = async (req, res) => {
+    var idOrder = req.body.idOrder;
+    var userLocation = req.body.userLocation;
+    var restaurantLocation = req.body.restaurantLocation;
+    await Order.findOne({ _id: idOrder }, (err, order) => {
+        var io = req.app.locals.io;
+        io.sockets.emit("locationUser", {
+            userLocation : userLocation,
+            restaurantLocation : restaurantLocation
+        });
+       
+    })
+}
+
 module.exports.updateUser = async (req, res) => {
     req.body = JSON.parse(req.body.user);
     User.findById(req.user._id, (err, user) => {
@@ -170,6 +184,7 @@ module.exports.changeActiveUser = async (req, res) => {
     }
     else {
         user.active = true;
+        user.numberCancel = 0;
         await user.updateOne(user);
     }
     return res.json(user);

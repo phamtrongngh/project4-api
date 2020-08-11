@@ -1,6 +1,7 @@
 const Shipper = require('../models/shipper.model');
 const Order = require("../models/order.model");
 const bcrypt = require("bcrypt");
+const axios = require("axios").default;
 module.exports.getShippers = async (req, res) => {
     var shipper = await Shipper.find();
     res.json(shipper);
@@ -9,14 +10,14 @@ module.exports.getShippers = async (req, res) => {
 module.exports.createShipper = async (req, res) => {
     req.body = JSON.parse(req.body.shipper);
     Shipper.findOne({ phone: req.body.phone }, (err, shipper) => {
-        if (shipper == null) { 
+        if (shipper == null) {
             bcrypt.hash(req.body.password, 10, function (err, hash) {
                 if (err) return res.json(err);
                 const shipper = new Shipper(req.body);
                 let avatar = req.file;
                 if (!avatar) {
                     shipper.avatar = "product-default-image.jpg";
-                } else shipper.avatar = avatar.path.split("\\")[2]; 
+                } else shipper.avatar = avatar.path.split("\\")[2];
                 shipper.password = hash;
                 shipper.save((err, result) => {
                     if (err) return res.json({ err });
@@ -69,7 +70,7 @@ module.exports.updateShipper = async (req, res) => {
     req.body = JSON.parse(req.body.coupon);
     let shipper = await Shipper.findOne({ _id: req.body._id });
     let avatar = req.file;
-    if (!avatar) {} 
+    if (!avatar) { }
     else {
         shipper.avatar = avatar.path.split("\\")[2];
     }
@@ -85,12 +86,13 @@ module.exports.updateShipper = async (req, res) => {
 
 module.exports.changeActiveShipper = async (req, res) => {
     let shipper = await Shipper.findOne({ _id: req.params.id });
-    if (shipper.active == true){
+    if (shipper.active == true) {
         shipper.active = false;
         await shipper.updateOne(shipper);
     }
     else {
         shipper.active = true;
+        shipper.numberCancel = 0;
         await shipper.updateOne(shipper);
     }
     return res.json(shipper);
@@ -163,6 +165,7 @@ module.exports.deliveringOrder = async (req, res) => {
 module.exports.sendMyLocation = async (req, res) => {
     let latLng = req.body;
     var io = req.app.locals.io;
+    
     await req.shipper.populate("currentOrder", (err, result) => {
         io.sockets.in(result.currentOrder.user).emit("shipperLocation", latLng);
     })
@@ -198,6 +201,12 @@ module.exports.cancelOrder = async (req, res) => {
             order.canceledBy = "shipper";
             await order.updateOne(order, async (err, raw) => {
                 req.shipper.currentOrder = null;
+                if (req.shipper.numberCancel < 2) {
+                    req.shipper.numberCancel += 1;
+                } else {
+                    req.shipper.active = false;
+                    io.sockets.in(req.shipper._id).emit("blockShipper");
+                }
                 await req.shipper.updateOne(req.shipper);
                 order.populate("user restaurant coupon", (err, result) => {
                     io.sockets.in(result.user._id).emit("cancelOrder", result);
@@ -209,3 +218,11 @@ module.exports.cancelOrder = async (req, res) => {
         };
     })
 }
+
+// module.exports.mapReady = async (req, res) => {
+//     var io = req.app.locals.io;
+//     await req.shipper.populate("currentOrder", (err, result) => {
+//         io.sockets.in(result.currentOrder.user).emit("mapReady");
+//     })
+//     return res.json("Successfully");
+// }

@@ -41,7 +41,7 @@ module.exports.put = async (req, res) => {
             $in: restaurants
         }
     }, async (err, restaurants) => {
-        await coupon.restaurants.push(...restaurants.map(x => x._id));
+        coupon.restaurants = restaurants.map(x => x._id);
     });
     let image = req.file;
     if (!image) {} 
@@ -53,7 +53,8 @@ module.exports.put = async (req, res) => {
     coupon.discount = req.body.discount;
     coupon.max = req.body.max;
     coupon.min = req.body.min;
-    coupon.exp = req.body.exp;
+    var date = new Date(req.body.exp);
+    coupon.exp = date;
     coupon.percent = req.body.percent;
     await coupon.updateOne(coupon);
     return res.json(coupon);

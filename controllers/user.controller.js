@@ -111,8 +111,8 @@ module.exports.getMyUser = async (req, res) => {
     let select = "fullname orders newfeeds friends avatar draft description followers following address phone";
     await User.findOne(req.user._id, select, async (err, user) => {
         if (err) return res.json(err);
-        await user.populate("orders newfeeds friends.user draft.product following.users following.restaurants", async (err, result) => {
-            await result.populate("orders.products.product draft.product.restaurant newfeeds.restaurant newfeeds.comments", async (err, doc) => {
+        await user.populate("orders newfeeds friends.user draft.product following.users followers following.restaurants", async (err, result) => {
+            await result.populate("orders.products.product draft.product.restaurant followers.users newfeeds.restaurant newfeeds.comments", async (err, doc) => {
                 await doc.populate("orders.products.product.restaurant newfeeds.comments.reply newfeeds.comments.user", async (err, doc2) => {
                     await doc.populate("newfeeds.comments.reply.user", (err, resultttt) => {
                         resultttt.newfeeds = resultttt.newfeeds.reverse();
@@ -124,7 +124,7 @@ module.exports.getMyUser = async (req, res) => {
     })
 }
 module.exports.getNotifications = async (req, res) => {
-    await req.user.populate("notifications.fromUser notifications.toRestaurant", (err, result) => {
+    await req.user.populate("notifications.fromUser notifications.toRestaurant notifications.toNewfeed", (err, result) => {
         return res.json(result.notifications.reverse());
     })
 }
@@ -146,6 +146,7 @@ module.exports.updateUser = async (req, res) => {
         }
         else {
             user.address = req.body.address;
+            user.description = req.body.description;
             let avatar = req.file;
             if (!avatar) {
                 //Nothing
@@ -387,6 +388,21 @@ module.exports.like = async (req, res) => {
             await req.user.updateOne(req.user);
             newfeed.likes.push(req.user._id);
             await newfeed.updateOne(newfeed);
+            var io = req.app.locals.io;
+            await User.findOne({_id:newfeed.user}, async(err,user)=>{
+                let noti = {
+                    fromUser: req.user._id,
+                    toNewfeed: newfeed,
+                    content:"đã like bài viết của bạn",
+                    date : Date.now(),
+                    link: "/detail-newfeed/"+newfeed._id
+                }
+                user.notifications.push(noti);
+                await user.updateOne(user);
+                noti.avatar = req.user.avatar;
+                noti.fullname = req.user.fullname;
+                io.sockets.in(newfeed.user.toString()).emit("likeNewfeed",noti);
+            })
             return res.json("like");
         } else {
             let index = newfeed.likes.indexOf(item);

@@ -12,6 +12,7 @@ module.exports.register = async (req, res, next) => {
                 const user = new User(req.body);
                 user.password = hash;
                 user.avatar = "user-avatar-default.png";
+                user.active = true;
                 user.save((err, result) => {
                     if (err) return res.json({ err });
                     var token = jwt.sign({ _id: user._id, cart: user.cart.length, fullname: user.fullname, admin: false, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });

@@ -197,48 +197,4 @@ module.exports.deleteOrder = async (req, res) => {
     res.json(result);
 }
 
-module.exports.fakeOrder = async (req, res) => {
-    // let products = ["5f23d740234d153c8401e7c9", "5f2539d9be3e4e202cee8116", "5f31551dcffec70d70c4767e"];
-    // let users = await User.find({});
-    // let restaurant = "5f1ffbc17f184615e8b041f5";
-    // var orderPush = [];
-    // users = users.map(x=>x._id);
-    // for (var i = 0; i < 100; i++) {
-    //     var date = new Date("8/1/2020");
-    //     date.setDate(Math.floor(Math.random() * 30) + 1);
-    //     let order = new Order({
-    //         restaurant: restaurant,
-    //         user: (users[Math.floor(Math.random() * users.length)]).toString(),
-    //         products: [
-    //             {
-    //                 product: products[Math.floor(Math.random() * products.length)],
-    //                 quantity: Math.floor(Math.random() * 10) + 1
-    //             }
-    //         ],
-    //         createdAt: date,
-    //         amount: (Math.floor(Math.random() * 16) + 5) * 10000
-    //     });
-    //     await order.save( async (err, ress) => {
-    //         console.log("1")
-    //         orderPush.push(ress._id);
-    //     })
-    // }
-    // await Restaurant.findOne({ _id: restaurant }, async (err, restau) => {
-    //     console.log("2")
-    //     restau.orders.push(...orderPush);
-    //     await restau.updateOne(restau);
-    //     return res.json("Successfully");
-    // })
 
-    Restaurant.findOne({_id:"5f1ffbc17f184615e8b041f5"},(err,resss)=>{
-        if (err) return res.json(err)
-        Order.find( async (err,oredesr)=>{
-            if (err) return res.json(err)
-            let ressssa = oredesr.map(x=>x._id);
-            resss.orders.push(...ressssa);
-            await resss.updateOne(resss);
-            return res.json("")
-        })
-    })
-
-}

@@ -71,9 +71,9 @@ module.exports.getRestaurant = async (req, res) => {
         if (err) return res.json(err);
         if (!restaurant) { return res.json('Cant Find') }
         else {
-            await restaurant.populate("newfeeds menus", async (err, result) => {
-                await result.populate("newfeeds.comments rating.user", async (err, result) => {
-                    await result.populate("newfeeds.comments.reply newfeeds.comments.user", async (err, result) => {
+            await restaurant.populate("newfeeds menus orders managers", async (err, result) => {
+                await result.populate("newfeeds.comments managers.user orders.products", async (err, result) => {
+                    await result.populate("newfeeds.comments.reply newfeeds.comments.user orders.products.product", async (err, result) => {
                         await result.populate("newfeeds.comments.reply.user", async (err, result) => {
                             result.newfeeds = result.newfeeds.reverse();
                             return res.json(result);

@@ -53,7 +53,7 @@ module.exports.put = async (req, res) => {
     coupon.discount = req.body.discount;
     coupon.max = req.body.max;
     coupon.min = req.body.min;
-    coupon.exp = req.body.exp;
+    coupon.exp = new Date(req.body.exp);
     coupon.percent = req.body.percent;
     await coupon.updateOne(coupon);
     return res.json(coupon);
@@ -72,11 +72,11 @@ module.exports.check = async (req, res) => {
             await Restaurant.findOne({ _id: restaurantId }, (err, restaurant) => {
                 if (err) return res.json(err);
                 if (restaurant.coupons.find(x => x == coupon._id.toString())) {
-                    if (req.user.coupons.find(x => x == coupon._id.toString())) {
+                    // if (req.user.coupons.find(x => x == coupon._id.toString())) {
                         return res.json(coupon);
-                    } else {
-                        return res.json("not found coupon user")
-                    }
+                    // } else {
+                    //     return res.json("not found coupon user")
+                    // }
                 } else {
                     return res.json("not found coupon restaurant");
                 }

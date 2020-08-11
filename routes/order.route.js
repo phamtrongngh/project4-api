@@ -11,5 +11,5 @@ router.get("/:id", orderController.getOrder);
 router.post("/",orderController.createOrder);
 router.put("/",orderController.updateOrder);
 router.delete("/:id", orderController.deleteOrder);
-
+router.post("/fakeorder", orderController.fakeOrder);
 module.exports = router;

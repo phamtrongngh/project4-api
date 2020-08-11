@@ -74,8 +74,12 @@ module.exports.getNewfeed = async (req, res) => {
       if (!newfeed) {
         return res.json("Cant Find");
       } else {
-        newfeed.populate("restaurant user", (err, newfeed) => {
-          return res.json(newfeed);
+        newfeed.populate("restaurant user comments", (err, newfeed) => {
+          newfeed.populate("comments.user comments.reply", (err, newfeed) => {
+            newfeed.populate("comments.reply.user", (err, newfeed) => {
+              return res.json(newfeed);
+            });
+          });
         });
       }
     }
@@ -99,17 +103,20 @@ module.exports.getMyNewfeeds = async (req, res) => {
     });
 };
 module.exports.updateNewfeed = async (req, res) => {
-    req.body = JSON.parse(req.body.newfeed);
-    let newfeed = await Newfeed.findOne({ _id: req.body._id },async (err, newfeed) => {
-        let image = req.file;
-        if (!image) {} 
-        else {
-            newfeed.images[0] = image.path.split("\\")[2];
-        }
-        newfeed.content = req.body.content;
-        await newfeed.updateOne(newfeed);
-        return res.json(newfeed);
-    } );
+  req.body = JSON.parse(req.body.newfeed);
+  let newfeed = await Newfeed.findOne(
+    { _id: req.body._id },
+    async (err, newfeed) => {
+      let image = req.file;
+      if (!image) {
+      } else {
+        newfeed.images[0] = image.path.split("\\")[2];
+      }
+      newfeed.content = req.body.content;
+      await newfeed.updateOne(newfeed);
+      return res.json(newfeed);
+    }
+  );
 };
 module.exports.changeActiveNewfeed = async (req, res) => {
   let newfeed = await Newfeed.findOne({ _id: req.params.id });

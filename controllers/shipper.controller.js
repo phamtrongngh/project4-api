@@ -165,11 +165,34 @@ module.exports.deliveringOrder = async (req, res) => {
 module.exports.sendMyLocation = async (req, res) => {
     let latLng = req.body;
     var io = req.app.locals.io;
-    
-    await req.shipper.populate("currentOrder", (err, result) => {
-        io.sockets.in(result.currentOrder.user).emit("shipperLocation", latLng);
+    let idUser;
+    req.shipper.populate("currentOrder", (err, result) => {
+        idUser = result.currentOrder.user;
+        result.populate("currentOrder.restaurant", (err, result) => {
+            const encodedURIUser = encodeURI(result.currentOrder.address);
+            const encodedURIRestaurant = encodeURI(result.currentOrder.restaurant.address);
+            axios.get('https://rsapi.goong.io/Place/AutoComplete?input=' + encodedURIUser + '&api_key=VdAMDyPKoipIV0sF3HKUPfYpqRxE8nAo9vteqZcF&limit=1')
+                .then(data => {
+                    let placeId = data.data.predictions[0].place_id;
+                    axios.get("https://rsapi.goong.io/Place/Detail?place_id=" + placeId + "&api_key=VdAMDyPKoipIV0sF3HKUPfYpqRxE8nAo9vteqZcF")
+                        .then(repsonse => {
+                            let userLocation = repsonse.data.result.geometry.location.lat + "%2C" + repsonse.data.result.geometry.location.lng;
+                            axios.get('https://rsapi.goong.io/Place/AutoComplete?input=' + encodedURIRestaurant + '&api_key=VdAMDyPKoipIV0sF3HKUPfYpqRxE8nAo9vteqZcF&limit=1')
+                                .then(dataRes => {
+                                    let placeIdRes = dataRes.data.predictions[0].place_id;
+                                    axios.get("https://rsapi.goong.io/Place/Detail?place_id=" + placeIdRes + "&api_key=VdAMDyPKoipIV0sF3HKUPfYpqRxE8nAo9vteqZcF")
+                                        .then(responseRes => {
+                                            let restaurantLocation = responseRes.data.result.geometry.location.lat + "%2C" + responseRes.data.result.geometry.location.lng;
+                                            io.sockets.in(idUser).emit("shipperLocation", latLng);
+                                            return res.json([userLocation.split("%2C"), restaurantLocation.split("%2C")]);
+                                        })
+                                })
+                        })
+                })
+        })
     })
-    return res.json("Successfully");
+
+
 }
 module.exports.completeOrder = async (req, res) => {
     let idOrder = req.shipper.currentOrder;

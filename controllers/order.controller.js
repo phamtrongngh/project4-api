@@ -122,7 +122,9 @@ module.exports.rate = async (req, res) => {
 module.exports.cancelOrder = async (req, res) => {
     let idOrder = req.params.id;
     var io = req.app.locals.io;
+    let shipperId;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
+        shipperId = order.shipper;
         if (order.user.toString() == req.user._id) {
             order.status = "canceled";
             order.canceledBy = "user";
@@ -140,12 +142,12 @@ module.exports.cancelOrder = async (req, res) => {
                         disabled = true;
                     }
                     await req.user.updateOne(req.user);
-                    io.sockets.in(order.shipper).emit("cancelOrder", result);
-                    io.sockets.emit("removeOrder", order);
+                    io.sockets.in(shipperId).emit("cancelOrder", result);
+
                     if (disabled) {
-                        return res.json({message:"disabled"})
+                        res.json("disabled")
                     } else {
-                        return res.json(result);
+                        res.json(result);
                     }
                 })
             });

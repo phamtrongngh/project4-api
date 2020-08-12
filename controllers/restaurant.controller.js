@@ -190,6 +190,19 @@ module.exports.changeActiveRestaurant = async (req, res) => {
     return res.json(restaurant);
 }
 
+module.exports.changeVerifyRestaurant = async (req, res) => {
+    let restaurant = await Restaurant.findOne({ _id: req.params.id });
+    if (restaurant.verified == true){
+        restaurant.verified = false;
+        await restaurant.updateOne(restaurant);
+    }
+    else {
+        restaurant.verified = true;
+        await restaurant.updateOne(restaurant);
+    }
+    return res.json(restaurant);
+}
+
 module.exports.deleteRestaurant = async (req, res) => {
     await Restaurant.deleteOne({ _id: req.params.id }, (err) => {
         if (err) return res.json(err);

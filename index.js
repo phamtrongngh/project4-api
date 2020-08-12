@@ -22,6 +22,7 @@ const io = require("socket.io")(server);
 
 io.on("connection", function (socket) {
     socket.on("join", (data) => {
+        console.log(data);
         socket.join(data);
     })
 })

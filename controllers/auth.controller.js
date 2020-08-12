@@ -30,16 +30,16 @@ module.exports.login = async (req, res) => {
     User.findOne({ phone: req.body.phone }, (err, user) => {
         if (err) res.json(err);
         if (user != null) {
-            if (bcrypt.compareSync(req.body.password, user.password)) {
-                var token = jwt.sign({ _id: user._id, cart: user.cart.length, fullname: user.fullname, admin: false, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });
-                // var io = req.app.locals.io;
-                // io.on("connection", (socket) => {
-                //     io.sockets.emit("connection");
-                // })
-                res.json({ access_token: token });
-            }
-            else {
-                res.json({ message: "Wrong password" })
+            if (user.active) {
+                if (bcrypt.compareSync(req.body.password, user.password)) {
+                    var token = jwt.sign({ _id: user._id, cart: user.cart.length, fullname: user.fullname, admin: false, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });
+                    res.json({ access_token: token });
+                }
+                else {
+                    res.json({ message: "Wrong password" })
+                }
+            }else{
+                res.json({ access_token: "disabled" })
             }
         }
         else {
@@ -55,20 +55,20 @@ module.exports.loginShipper = async (req, res) => {
     Shipper.findOne({ phone: req.body.phone }, (err, shipper) => {
         if (err) res.json(err);
         if (shipper != null) {
-            if (bcrypt.compareSync(req.body.password, shipper.password)) {
-                var io = req.app.locals.io;
-                var token = jwt.sign({ _id: shipper._id, fullname: shipper.fullname, shipper: true }, "project4foodtap", { algorithm: "HS256" });
-                // io.on("connection", (socket) => {
-                //     io.sockets.emit("messageServer");
-                // })
-                res.json({ access_token: token });
-            }
-            else {
-                res.json({ message: "Wrong password" })
+            if (shipper.active) {
+                if (bcrypt.compareSync(req.body.password, shipper.password)) {
+                    var token = jwt.sign({ _id: shipper._id, fullname: shipper.fullname, shipper: true }, "project4foodtap", { algorithm: "HS256" });
+                    res.json({ access_token: token });
+                }
+                else {
+                    res.json({ access_token: "wrongPassword" })
+                }
+            } else {
+                res.json({ access_token: "disabled" });
             }
         }
         else {
-            res.json({ message: "Wrong username" });
+            res.json({ access_token: "wrongPhone" });
         }
     })
 }
@@ -136,13 +136,9 @@ module.exports.isAuthenticated = (req, res, next) => {
                 if (!payload.shipper) {
                     if (payload.admin == false) {
                         User.findOne({ _id: payload._id }, (err, user) => {
-                            if (user) {
-                                if (user.active) {
+                            if (user && user.active) {
                                     req.user = user;
                                     next();
-                                } else {
-                                    return res.status(325).json({ message: "Account has been disabled" })
-                                }
                             } else {
                                 res.status(401).json({ message: "Unauthorized user!" });
                             }
@@ -165,8 +161,8 @@ module.exports.isAuthenticated = (req, res, next) => {
                             if (shipper.active) {
                                 req.shipper = shipper;
                                 next();
-                            }else{
-                                return res.json("Your account is disabled");
+                            } else {
+                                return res.json("Disabled");
                             }
                         } else {
                             res.status(401).json({ message: "Unauthorized user!" });

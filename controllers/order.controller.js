@@ -122,7 +122,9 @@ module.exports.rate = async (req, res) => {
 module.exports.cancelOrder = async (req, res) => {
     let idOrder = req.params.id;
     var io = req.app.locals.io;
+    let shipperId;
     await Order.findOne({ _id: idOrder }, async (err, order) => {
+        shipperId = order.shipper;
         if (order.user.toString() == req.user._id) {
             order.status = "canceled";
             order.canceledBy = "user";
@@ -132,9 +134,21 @@ module.exports.cancelOrder = async (req, res) => {
                         shi.currentOrder = null;
                         await shi.updateOne(shi);
                     })
-                    io.sockets.in(order.shipper).emit("cancelOrder", result);
-                    io.sockets.emit("removeOrder", order);
-                    return res.json(result);
+                    var disabled = false;
+                    if (req.user.numberCancel < 2) {
+                        req.user.numberCancel += 1;
+                    } else {
+                        req.user.active = false;
+                        disabled = true;
+                    }
+                    await req.user.updateOne(req.user);
+                    io.sockets.in(shipperId).emit("cancelOrder", result);
+
+                    if (disabled) {
+                        res.json("disabled")
+                    } else {
+                        res.json(result);
+                    }
                 })
             });
         } else {
@@ -230,11 +244,11 @@ module.exports.fakeOrder = async (req, res) => {
     //     return res.json("Successfully");
     // })
 
-    Restaurant.findOne({_id:"5f1ffbc17f184615e8b041f5"},(err,resss)=>{
+    Restaurant.findOne({ _id: "5f1ffbc17f184615e8b041f5" }, (err, resss) => {
         if (err) return res.json(err)
-        Order.find( async (err,oredesr)=>{
+        Order.find(async (err, oredesr) => {
             if (err) return res.json(err)
-            let ressssa = oredesr.map(x=>x._id);
+            let ressssa = oredesr.map(x => x._id);
             resss.orders.push(...ressssa);
             await resss.updateOne(resss);
             return res.json("")

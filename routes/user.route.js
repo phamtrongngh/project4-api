@@ -12,6 +12,7 @@ router.post("/addToCart", userController.addToCart);
 router.post("/recart/:index", userController.recart);
 router.post("/reorder/:id", userController.reorder);
 router.post("/sendRouteToShipper", userController.sendRouteToShipper);
+router.post("/sendLocationUser", userController.sendLocationUser);
 router.get("/getNotifications", userController.getNotifications);
 router.get("/getFriendRequests", userController.getFriendRequests);
 router.delete("/removeFromCart/:id", userController.removeFromCart);

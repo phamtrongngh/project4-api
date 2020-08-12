@@ -13,6 +13,7 @@ router.get("/:id", restaurantController.getRestaurant);
 router.post("/",upload.any(), restaurantController.createRestaurant);
 router.put("/",upload.any(),restaurantController.updateRestaurant);
 router.put("/changeActiveRestaurant/:id", restaurantController.changeActiveRestaurant);
+router.put("/changeVerifyRestaurant/:id", restaurantController.changeVerifyRestaurant);
 router.delete("/:id", restaurantController.deleteRestaurant);
 
 module.exports = router;

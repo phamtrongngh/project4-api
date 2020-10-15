@@ -205,7 +205,6 @@ module.exports.changeVerifyRestaurant = async (req, res) => {
 
 module.exports.deleteRestaurant = async (req, res) => {
     await Restaurant.deleteOne({ _id: req.params.id }, (err) => {
-        if (err) return res.json(err);
-
+        if (err) return res.json(err);  
     });
 }

@@ -17,7 +17,6 @@ module.exports.register = async (req, res, next) => {
                     if (err) return res.json({ err });
                     var token = jwt.sign({ _id: user._id, cart: user.cart.length, fullname: user.fullname, admin: false, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });
                     res.json({ access_token: token });
-
                 })
             })
         } else {
@@ -26,27 +25,7 @@ module.exports.register = async (req, res, next) => {
     })
 }
 
-module.exports.login = async (req, res) => {
-    User.findOne({ phone: req.body.phone }, (err, user) => {
-        if (err) res.json(err);
-        if (user != null) {
-            if (user.active) {
-                if (bcrypt.compareSync(req.body.password, user.password)) {
-                    var token = jwt.sign({ _id: user._id, cart: user.cart.length, fullname: user.fullname, admin: false, avatar: user.avatar }, "project4foodtap", { algorithm: "HS256" });
-                    res.json({ access_token: token });
-                }
-                else {
-                    res.json({ message: "Wrong password" })
-                }
-            }else{
-                res.json({ access_token: "disabled" })
-            }
-        }
-        else {
-            res.json({ message: "Wrong username" });
-        }
-    })
-}
+
 module.exports.logout = async (req, res) => {
     res.json("You have signed out!!!");
 }
